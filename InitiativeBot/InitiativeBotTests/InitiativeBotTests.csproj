@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IniciativeBot\IniciativeBot.csproj" />
+    <ProjectReference Include="..\InitiativeBot\InitiativeBot.csproj" />
   </ItemGroup>
 
 </Project>
