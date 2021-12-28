@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using IniciativeBot.Rolling;
+using InitiativeBot.Rolling;
 
 using Xunit;
 
-namespace IniciativeBotTests.Rolling
+namespace InitiativeBotTests.Rolling
 {
     public class RNGTests
     {

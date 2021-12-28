@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IniciativeBot.Rolling
+namespace InitiativeBot.Rolling
 {
     /// <summary>
     /// Rolling dice utility.
