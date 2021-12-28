@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IniciativeBot", "IniciativeBot\IniciativeBot.csproj", "{3793FAB2-C510-40D8-8112-07BD90F7074D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InitiativeBot", "IniciativeBot\InitiativeBot.csproj", "{3793FAB2-C510-40D8-8112-07BD90F7074D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IniciativeBotTests", "IniciativeBotTests\IniciativeBotTests.csproj", "{CEAA8A11-EF93-4D26-9FDF-655BF5260915}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InitiativeBotTests", "IniciativeBotTests\InitiativeBotTests.csproj", "{CEAA8A11-EF93-4D26-9FDF-655BF5260915}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
