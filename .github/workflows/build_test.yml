@@ -25,8 +25,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-nuget
     - name: Restore dependencies
+      working-directory: ./InitiativeBot
       run: dotnet restore
     - name: Build
+      working-directory: ./InitiativeBot
       run: dotnet build --no-restore
     - name: Test
+      working-directory: ./InitiativeBot
       run: dotnet test --no-build --verbosity normal
