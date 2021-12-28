@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IniciativeBot.Commands
+namespace InitiativeBot.Commands
 {
     /// <summary>
     /// Player is removed from the list
