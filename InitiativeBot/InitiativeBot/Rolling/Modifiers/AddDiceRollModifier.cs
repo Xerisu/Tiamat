@@ -11,8 +11,8 @@ namespace InitiativeBot.Rolling.Modifiers
     /// </summary>
     public class AddDiceRollModifier : IRollModifier
     {
-        private IRoll _roll;
-        private IRoll _roll2;
+        private readonly IRoll _roll;
+        private readonly IRoll _roll2;
 
         /// <summary>
         /// Constructor.

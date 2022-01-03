@@ -11,7 +11,7 @@ namespace InitiativeBot.Rolling.Modifiers
     /// </summary>
     public class DisadvantageRollModifier : IRollModifier
     {
-        private IRoll _roll;
+        private readonly IRoll _roll;
 
         /// <summary>
         /// Constructor.

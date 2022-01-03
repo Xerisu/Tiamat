@@ -11,8 +11,8 @@ namespace InitiativeBot.Rolling.Modifiers
     /// </summary>
     public class AddConstantRollModifier : IRollModifier
     {
-        private IRoll _roll;
-        private int _constant;
+        private readonly IRoll _roll;
+        private readonly int _constant;
 
         /// <summary>
         /// Constructor.
