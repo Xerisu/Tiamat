@@ -20,12 +20,12 @@ namespace InitiativeBot.InitiativeList.Player
     /// <summary>
     /// Player on the initiative list
     /// </summary>
-    public class Player
+    public struct Player
     {
         /// <summary>
         /// Name of the player
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; }
 
         /// <summary>
         /// State of the player
@@ -35,7 +35,7 @@ namespace InitiativeBot.InitiativeList.Player
         /// <summary>
         /// Initiative of the player
         /// </summary>
-        public int Initiative { get; set; }
+        public int Initiative { get; }
 
         /// <summary>
         /// Constructor
