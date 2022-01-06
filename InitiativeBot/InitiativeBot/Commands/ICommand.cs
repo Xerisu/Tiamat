@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InitiativeBot.InitiativeList;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace InitiativeBot.Commands
         /// <summary>
         /// Execute command
         /// </summary>
-        void Execute();
+        /// <param name="initiativeList">Initiaive list that the command will act upon</param>
+        void Execute(IInitiativeList initiativeList);
     }
 }

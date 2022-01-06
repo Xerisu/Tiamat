@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InitiativeBot.InitiativeList;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +24,7 @@ namespace InitiativeBot.Commands
         }
 
         /// <inheritdoc/>
-        public void Execute()
+        public void Execute(IInitiativeList initiativeList)
         {
             Console.WriteLine($"Kill command executed. Killed player: {_playerName}.");
         }
