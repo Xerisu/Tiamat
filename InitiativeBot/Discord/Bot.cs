@@ -213,7 +213,7 @@ namespace Discord
         {
             var guild = ((SocketGuildChannel)button.Channel).Guild;
             await RunCommandForGuild(guild, new NextTurnCommand());
-            await button.RespondAsync(Constatns.Message.Button.ButtonResponseMessage, ephemeral: true);
+            await button.UpdateAsync(messageProperties => { });
         }
         #endregion
     }
