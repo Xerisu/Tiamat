@@ -42,19 +42,19 @@ namespace Discord
             foreach(var guild in _client.Guilds)
             {
                 await ResyncCommandsInGuild(guild);
-                await FindAndPrepareGuildTiamatChannel(guild, Strings.TiamatChannelName);
+                await FindAndPrepareGuildTiamatChannel(guild, Constatns.TiamatChannelName);
             }
         }
 
         #region Command resynchronization
         private IReadOnlyDictionary<string, SlashCommandBuilder> _commandToBuilders = new Dictionary<string, SlashCommandBuilder>()
         {
-            [Strings.Commands.TiamatSetup.CommandName] = new SlashCommandBuilder()
-                .WithName(Strings.Commands.TiamatSetup.CommandName)
-                .WithDescription(Strings.Commands.TiamatSetup.CommandDescription),
-            [Strings.Commands.TiamatHelp.CommandName] = new SlashCommandBuilder()
-                .WithName(Strings.Commands.TiamatHelp.CommandName)
-                .WithDescription(Strings.Commands.TiamatHelp.CommandDescription),
+            [Constatns.Commands.TiamatSetup.CommandName] = new SlashCommandBuilder()
+                .WithName(Constatns.Commands.TiamatSetup.CommandName)
+                .WithDescription(Constatns.Commands.TiamatSetup.CommandDescription),
+            [Constatns.Commands.TiamatHelp.CommandName] = new SlashCommandBuilder()
+                .WithName(Constatns.Commands.TiamatHelp.CommandName)
+                .WithDescription(Constatns.Commands.TiamatHelp.CommandDescription),
         };
 
         private async Task ResyncCommandsInGuild(SocketGuild guild)
@@ -94,10 +94,19 @@ namespace Discord
             await channel.DeleteMessagesAsync(messages);
             Log.Information("Removed {MessageCount} messages from the channel in {GuildName} ({GuildId})", messages.Count(), guild.Name, guild.Id);
 
-            var message = await channel.SendMessageAsync("This message is an intermediate step in configuring bot in this guild (2)");
+            var messageId = await SendIntermediateSetupMessage(channel);
 
-            _loadedServers[guild.Id] = new ServerInfo(channel.Id, message.Id);
-            Log.Information("Created info for guild {GuildName} ({GuildId}): ChannelId - {ChannelId}, MessageId - {MessagId}", guild.Name, guild.Id, channel.Id, message.Id);
+            _loadedServers[guild.Id] = new ServerInfo(channel.Id, messageId);
+            Log.Information("Created info for guild {GuildName} ({GuildId}): ChannelId - {ChannelId}, MessageId - {MessagId}", guild.Name, guild.Id, channel.Id, messageId);
+        }
+
+        private async Task<ulong> SendIntermediateSetupMessage(SocketTextChannel channel)
+        {
+            var emoji = String.IsNullOrWhiteSpace(Constatns.Message.Button.Emote) ? null : new Emoji(Constatns.Message.Button.Emote);
+            var buttonBuilder = new ComponentBuilder()
+                .WithButton(Constatns.Message.Button.Label, Constatns.Message.Button.Id, Constatns.Message.Button.Style, emoji);
+            var message = await channel.SendMessageAsync(Constatns.Message.IntermediateStepMessage, components: buttonBuilder.Build());
+            return message.Id;
         }
 
         private async Task<SocketTextChannel> CreateTiamatChannelInGuild(SocketGuild guild, string channelName)
@@ -115,10 +124,10 @@ namespace Discord
             {
                 switch (command.Data.Name)
                 {
-                    case Strings.Commands.TiamatSetup.CommandName:
+                    case Constatns.Commands.TiamatSetup.CommandName:
                         await HandleSetupCommand(command);
                         break;
-                    case Strings.Commands.TiamatHelp.CommandName:
+                    case Constatns.Commands.TiamatHelp.CommandName:
                         await HandleHelpCommand(command);
                         break;
                 }
@@ -132,13 +141,13 @@ namespace Discord
 
         private async Task HandleSetupCommand(SocketSlashCommand command)
         {
-            await FindAndPrepareGuildTiamatChannel(((SocketGuildChannel)command.Channel).Guild, Strings.TiamatChannelName);
-            await command.RespondAsync(Strings.Commands.TiamatSetup.SetupResponseMessage);
+            await FindAndPrepareGuildTiamatChannel(((SocketGuildChannel)command.Channel).Guild, Constatns.TiamatChannelName);
+            await command.RespondAsync(Constatns.Commands.TiamatSetup.SetupResponseMessage);
         }
 
         private async Task HandleHelpCommand(SocketSlashCommand command)
         {
-            await command.RespondAsync(Strings.Commands.TiamatHelp.HelpResponseMessage, ephemeral: true);
+            await command.RespondAsync(Constatns.Commands.TiamatHelp.HelpResponseMessage, ephemeral: true);
         }
     }
 }

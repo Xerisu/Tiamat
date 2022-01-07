@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Discord
 {
-    public static class Strings
+    public static class Constatns
     {
         public static class Commands
         {
@@ -21,10 +21,22 @@ namespace Discord
             {
                 public const string CommandName = "help";
                 public const string CommandDescription = "Shows help about Tiamat.";
-                public const string HelpResponseMessage = "Tiamat usage:\nTo configure channel use commad `/tiamat-setup`.\nThen just use new channel lol.";
+                public const string HelpResponseMessage = "Tiamat usage:\nTo configure channel use commad `/setup`.\nThen just use new channel lol.";
             }
         }
 
         public const string TiamatChannelName = "tiamat-initiative-list";
+
+        public static class Message
+        {
+            public const string IntermediateStepMessage = "This message is an intermediate step in configuring bot in this server.";
+            public static class Button
+            {
+                public const string Label = "Next Turn";
+                public const string Id = "next-turn-button";
+                public const string Emote = "➡️"; //Must be 1 pure UTF-8 emote or nothing/whitespace
+                public const ButtonStyle Style = ButtonStyle.Secondary;
+            }
+        }
     }
 }
