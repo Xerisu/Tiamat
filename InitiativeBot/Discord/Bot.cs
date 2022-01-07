@@ -87,7 +87,7 @@ namespace Discord
         #region Channel resynchronization
         private async Task FindAndPrepareGuildTiamatChannel(SocketGuild guild, string tiamatChannelName)
         {
-            var channel = guild.TextChannels.FirstOrDefault(c => c.Name == tiamatChannelName);
+            ITextChannel? channel = guild.TextChannels.FirstOrDefault(c => c.Name == tiamatChannelName);
 
             if(channel == null)
             {
@@ -95,7 +95,7 @@ namespace Discord
             }
             var messages = await channel.GetMessagesAsync(50).FlattenAsync();
             await channel.DeleteMessagesAsync(messages);
-            Log.Information("Removed {MessageCount} messages from the channel in {GuildName} ({GuildId})", messages.Count(), guild.Name, guild.Id);
+            Log.Information("Removed {MessageCount} message(s) from the channel in {GuildName} ({GuildId})", messages.Count(), guild.Name, guild.Id);
 
             var messageId = await SendIntermediateSetupMessage(channel);
 
@@ -103,7 +103,7 @@ namespace Discord
             Log.Information("Created info for guild {GuildName} ({GuildId}): ChannelId - {ChannelId}, MessageId - {MessagId}", guild.Name, guild.Id, channel.Id, messageId);
         }
 
-        private async Task<ulong> SendIntermediateSetupMessage(SocketTextChannel channel)
+        private async Task<ulong> SendIntermediateSetupMessage(ITextChannel channel)
         {
             var emoji = String.IsNullOrWhiteSpace(Constatns.Message.Button.Emote) ? null : new Emoji(Constatns.Message.Button.Emote);
             var buttonBuilder = new ComponentBuilder()
@@ -112,12 +112,12 @@ namespace Discord
             return message.Id;
         }
 
-        private async Task<SocketTextChannel> CreateTiamatChannelInGuild(SocketGuild guild, string channelName)
+        private async Task<ITextChannel> CreateTiamatChannelInGuild(SocketGuild guild, string channelName)
         {
             var newChannel = await guild.CreateTextChannelAsync(channelName);
 
             Log.Information("Added channel {ChannelName} in guild {GuildName} ({GuildId})", channelName, guild.Name, guild.Id);
-            return guild.GetTextChannel(newChannel.Id);
+            return newChannel;
         }
         #endregion
 
@@ -136,7 +136,11 @@ namespace Discord
                 throw new UserMessageException(Constatns.Error.ReconfigureServerErrorMessage);
 
             if(command != null)
+            {
+                Log.Information("Command {Command} run for {GuildName} ({GuildId})", command, guild.Name, guild.Id);
                 serverInfo.InitiativeList.ExecuteCommand(command);
+            }
+                
 
             await channel.ModifyMessageAsync(serverInfo.MessageId, messageProperties =>
             {
