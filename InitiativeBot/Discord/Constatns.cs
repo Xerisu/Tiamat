@@ -42,5 +42,11 @@ namespace Discord
                 public const string ButtonResponseMessage = "Moved to the next player.";
             }
         }
+
+        public static class Error
+        {
+            public const string UnknownErrorMessage = "Unknown error :frowning:\nTry to reconfigure bot with `/create-channel` or contact authors.";
+            public const string ReconfigureServerErrorMessage = "Server was not properly configured. Try to run `/create-channel`.";
+        }
     }
 }

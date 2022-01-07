@@ -125,15 +125,15 @@ namespace Discord
         private async Task RunCommandForGuild(SocketGuild guild, ICommand? command = null)
         {
             if(!_loadedServers.TryGetValue(guild.Id, out var serverInfo))
-                throw new UserMessageException("Server was not properly configured. Try to run `/create-channel`.");
+                throw new UserMessageException(Constatns.Error.ReconfigureServerErrorMessage);
 
             var channel = guild.GetTextChannel(serverInfo.ChannelId);
 
             if(channel == null)
-                throw new UserMessageException("Server was not properly configured. Try to run `/create-channel`.");
+                throw new UserMessageException(Constatns.Error.ReconfigureServerErrorMessage);
 
             if(await channel.GetMessageAsync(serverInfo.MessageId) == null)
-                throw new UserMessageException("Server was not properly configured. Try to run `/create-channel`.");
+                throw new UserMessageException(Constatns.Error.ReconfigureServerErrorMessage);
 
             if(command != null)
                 serverInfo.InitiativeList.ExecuteCommand(command);
@@ -148,7 +148,7 @@ namespace Discord
         private string HandleUserException(Exception ex, string context)
         {
             Log.Error(ex, "{Context} failed: {errorMessage}", context, ex.Message);
-            return ex is UserMessageException umex ? umex.Message : "Unknown error :(\nTry to reconfigure bot with `/create-channel` or contact authors.";
+            return ex is UserMessageException umex ? umex.Message : Constatns.Error.UnknownErrorMessage;
         }
 
         #region Slash commands handling 
