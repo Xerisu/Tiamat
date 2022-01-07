@@ -86,37 +86,47 @@ namespace Discord
         {
             var channel = guild.TextChannels.FirstOrDefault(c => c.Name == tiamatChannelName);
 
-            int oldChannelPosition = 0;
-            if(channel != null)
+            if(channel == null)
             {
-                oldChannelPosition = channel.Position;
-                await channel.DeleteAsync();
+                channel = await CreateTiamatChannelInGuild(guild, tiamatChannelName);
             }
-                
-            channel = await CreateTiamatChannelInGuild(guild, tiamatChannelName, oldChannelPosition);
+            var messages = await channel.GetMessagesAsync(50).FlattenAsync();
+            await channel.DeleteMessagesAsync(messages);
+            Log.Information("Removed {MessageCount} messages from the channel in {GuildName} ({GuildId})", messages.Count(), guild.Name, guild.Id);
+
+            var message = await channel.SendMessageAsync("This message is an intermediate step in configuring bot in this guild (2)");
+
+            _loadedServers[guild.Id] = new ServerInfo(channel.Id, message.Id);
+            Log.Information("Created info for guild {GuildName} ({GuildId}): ChannelId - {ChannelId}, MessageId - {MessagId}", guild.Name, guild.Id, channel.Id, message.Id);
         }
 
-        private async Task<SocketTextChannel> CreateTiamatChannelInGuild(SocketGuild guild, string channelName, int oldPosition = 0)
+        private async Task<SocketTextChannel> CreateTiamatChannelInGuild(SocketGuild guild, string channelName)
         {
             var newChannel = await guild.CreateTextChannelAsync(channelName);
-            var r = new ReorderChannelProperties(newChannel.Id, oldPosition);
-            await guild.ReorderChannelsAsync(new ReorderChannelProperties[] { r });
 
-            Log.Information("Added channel {ChannelName} on position {position} in guild {GuildName} ({GuildId})", channelName, oldPosition, guild.Name, guild.Id);
+            Log.Information("Added channel {ChannelName} in guild {GuildName} ({GuildId})", channelName, guild.Name, guild.Id);
             return guild.GetTextChannel(newChannel.Id);
         }
         #endregion
 
         private async Task SlashCommandHandler(SocketSlashCommand command)
         {
-            switch(command.Data.Name)
+            try
             {
-                case Strings.Commands.TiamatSetup.CommandName:
-                    await HandleSetupCommand(command);
-                    break;
-                case Strings.Commands.TiamatHelp.CommandName:
-                    await HandleHelpCommand(command);
-                    break;
+                switch (command.Data.Name)
+                {
+                    case Strings.Commands.TiamatSetup.CommandName:
+                        await HandleSetupCommand(command);
+                        break;
+                    case Strings.Commands.TiamatHelp.CommandName:
+                        await HandleHelpCommand(command);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Handling command {commandName} failed: {errorMessage}", command.CommandName, ex.Message);
+                await command.RespondAsync($"Command {command.CommandName} failed :(", ephemeral: true);
             }
         }
 

@@ -6,8 +6,14 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InitiativeBot", "InitiativeBot\InitiativeBot.csproj", "{3793FAB2-C510-40D8-8112-07BD90F7074D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InitiativeBotTests", "InitiativeBotTests\InitiativeBotTests.csproj", "{CEAA8A11-EF93-4D26-9FDF-655BF5260915}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3793FAB2-C510-40D8-8112-07BD90F7074D} = {3793FAB2-C510-40D8-8112-07BD90F7074D}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord", "Discord\Discord.csproj", "{D153E21E-3091-4A8B-A04B-E3770B73F2C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discord", "Discord\Discord.csproj", "{D153E21E-3091-4A8B-A04B-E3770B73F2C1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3793FAB2-C510-40D8-8112-07BD90F7074D} = {3793FAB2-C510-40D8-8112-07BD90F7074D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

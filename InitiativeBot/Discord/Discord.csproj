@@ -13,6 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InitiativeBot\InitiativeBot.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="token">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
