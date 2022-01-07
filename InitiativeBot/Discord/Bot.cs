@@ -13,7 +13,7 @@ namespace Discord
     internal class Bot
     {
         private readonly DiscordSocketClient _client;
-        //private readonly Dictionary<ulong, ulong>
+        private readonly Dictionary<ulong, ServerInfo> _loadedServers = new();
 
         public Bot()
         {
@@ -84,24 +84,26 @@ namespace Discord
         #region Channel resynchronization
         private async Task FindAndPrepareGuildTiamatChannel(SocketGuild guild, string tiamatChannelName)
         {
-            var channels = guild.TextChannels.Where(c => c.Name == tiamatChannelName);
-            SocketTextChannel channel;
-            if(!channels.Any())
+            var channel = guild.TextChannels.FirstOrDefault(c => c.Name == tiamatChannelName);
+
+            int oldChannelPosition = 0;
+            if(channel != null)
             {
-                ulong newChannelId = await CreateTiamatChannelInGuild(guild, tiamatChannelName);
-                channel = guild.GetTextChannel(newChannelId);
-            } 
-            else
-            {
-                channel = channels.First();
+                oldChannelPosition = channel.Position;
+                await channel.DeleteAsync();
             }
+                
+            channel = await CreateTiamatChannelInGuild(guild, tiamatChannelName, oldChannelPosition);
         }
 
-        private async Task<ulong> CreateTiamatChannelInGuild(SocketGuild guild, string channelName)
+        private async Task<SocketTextChannel> CreateTiamatChannelInGuild(SocketGuild guild, string channelName, int oldPosition = 0)
         {
             var newChannel = await guild.CreateTextChannelAsync(channelName);
-            Log.Information("Added channel {ChannelName} in guild {GuildName} ({GuildId})", channelName, guild.Name, guild.Id);
-            return newChannel.Id;
+            var r = new ReorderChannelProperties(newChannel.Id, oldPosition);
+            await guild.ReorderChannelsAsync(new ReorderChannelProperties[] { r });
+
+            Log.Information("Added channel {ChannelName} on position {position} in guild {GuildName} ({GuildId})", channelName, oldPosition, guild.Name, guild.Id);
+            return guild.GetTextChannel(newChannel.Id);
         }
         #endregion
 
