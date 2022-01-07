@@ -43,6 +43,7 @@ namespace Discord
             {
                 await ResyncCommandsInGuild(guild);
                 await FindAndPrepareGuildTiamatChannel(guild, Constatns.TiamatChannelName);
+                await UpdateMessageForGuild(guild);
             }
         }
 
@@ -118,6 +119,27 @@ namespace Discord
         }
         #endregion
 
+        private async Task UpdateMessageForGuild(SocketGuild guild)
+        {
+            if(!_loadedServers.TryGetValue(guild.Id, out var serverInfo))
+            {
+                throw new UserMessageException("Server was not properly configured. Try to run `/create-channel`.");
+            }
+
+            var channel = guild.GetTextChannel(serverInfo.ChannelId);
+            await channel.ModifyMessageAsync(serverInfo.MessageId, messageProperties =>
+            {
+                messageProperties.Content = serverInfo.GetDiscordMessage();
+            });
+        }
+
+        // Returns message that should be sent to the user as a result
+        private string HandleUserException(Exception ex, string context)
+        {
+            Log.Error(ex, "{Context} failed: {errorMessage}", context, ex.Message);
+            return ex is UserMessageException umex ? umex.Message : "Unknown error :(";
+        }
+
         private async Task SlashCommandHandler(SocketSlashCommand command)
         {
             try
@@ -134,8 +156,8 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Handling command {commandName} failed: {errorMessage}", command.CommandName, ex.Message);
-                await command.RespondAsync($"Command {command.CommandName} failed :(", ephemeral: true);
+                string message = HandleUserException(ex, command.CommandName);
+                await command.RespondAsync(message, ephemeral: true);
             }
         }
 

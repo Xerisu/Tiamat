@@ -30,6 +30,7 @@ namespace Discord
         public static class Message
         {
             public const string IntermediateStepMessage = "This message is an intermediate step in configuring bot in this server.";
+            public const string InitiativeListMessageCommonPart = "**_Initiative List_**:\n";
             public static class Button
             {
                 public const string Label = "Next Turn";
