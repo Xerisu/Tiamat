@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InitiativeBot", "Initiative
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InitiativeBotTests", "InitiativeBotTests\InitiativeBotTests.csproj", "{CEAA8A11-EF93-4D26-9FDF-655BF5260915}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord", "Discord\Discord.csproj", "{D153E21E-3091-4A8B-A04B-E3770B73F2C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{CEAA8A11-EF93-4D26-9FDF-655BF5260915}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEAA8A11-EF93-4D26-9FDF-655BF5260915}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEAA8A11-EF93-4D26-9FDF-655BF5260915}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D153E21E-3091-4A8B-A04B-E3770B73F2C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D153E21E-3091-4A8B-A04B-E3770B73F2C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D153E21E-3091-4A8B-A04B-E3770B73F2C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D153E21E-3091-4A8B-A04B-E3770B73F2C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
