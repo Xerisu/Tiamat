@@ -13,6 +13,7 @@ namespace Discord
     internal class Bot
     {
         private readonly DiscordSocketClient _client;
+        //private readonly Dictionary<ulong, ulong>
 
         public Bot()
         {
@@ -41,6 +42,7 @@ namespace Discord
             foreach(var guild in _client.Guilds)
             {
                 await ResyncCommandsInGuild(guild);
+                await FindAndPrepareGuildTiamatChannel(guild, Strings.TiamatChannelName);
             }
         }
 
@@ -79,6 +81,30 @@ namespace Discord
         }
         #endregion
 
+        #region Channel resynchronization
+        private async Task FindAndPrepareGuildTiamatChannel(SocketGuild guild, string tiamatChannelName)
+        {
+            var channels = guild.TextChannels.Where(c => c.Name == tiamatChannelName);
+            SocketTextChannel channel;
+            if(!channels.Any())
+            {
+                ulong newChannelId = await CreateTiamatChannelInGuild(guild, tiamatChannelName);
+                channel = guild.GetTextChannel(newChannelId);
+            } 
+            else
+            {
+                channel = channels.First();
+            }
+        }
+
+        private async Task<ulong> CreateTiamatChannelInGuild(SocketGuild guild, string channelName)
+        {
+            var newChannel = await guild.CreateTextChannelAsync(channelName);
+            Log.Information("Added channel {ChannelName} in guild {GuildName} ({GuildId})", channelName, guild.Name, guild.Id);
+            return newChannel.Id;
+        }
+        #endregion
+
         private async Task SlashCommandHandler(SocketSlashCommand command)
         {
             switch(command.Data.Name)
@@ -94,7 +120,8 @@ namespace Discord
 
         private async Task HandleSetupCommand(SocketSlashCommand command)
         {
-            await command.RespondAsync("a");
+            await FindAndPrepareGuildTiamatChannel(((SocketGuildChannel)command.Channel).Guild, Strings.TiamatChannelName);
+            await command.RespondAsync(Strings.Commands.TiamatSetup.SetupResponseMessage);
         }
 
         private async Task HandleHelpCommand(SocketSlashCommand command)
