@@ -4,4 +4,6 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
-await new Discord.Bot().Main();
+var token = File.ReadAllText("./token");
+
+await new Discord.Bot().Main(token);

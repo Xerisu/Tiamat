@@ -22,10 +22,8 @@ namespace Discord
             _client.SlashCommandExecuted += SlashCommandHandler;
         }
 
-        public async Task Main()
+        public async Task Main(string token)
         {
-            var token = "OTI5MDcyODIxMDYwMTM3MDUw.YdiAfQ.R1LjsDLynwV0JnqReXOF61G9fN0";
-
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
 
@@ -59,9 +57,6 @@ namespace Discord
 
         private async Task ResyncCommandsInGuild(SocketGuild guild)
         {
-            var commands = await guild.GetApplicationCommandsAsync();
-            commands ??= new List<SocketApplicationCommand>();
-
             foreach (var command in _commandToBuilders.Keys)
             {
                 await AddCommandInGuild(command, guild);
