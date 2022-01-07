@@ -1,5 +1,6 @@
 ﻿using Discord.Net;
 using Discord.WebSocket;
+using InitiativeBot.Commands;
 using Newtonsoft.Json;
 using Serilog;
 using System;
@@ -21,6 +22,7 @@ namespace Discord
             _client.Log += Logging;
             _client.Ready += ResyncBot;
             _client.SlashCommandExecuted += SlashCommandHandler;
+            _client.ButtonExecuted += ButtonHandler;
         }
 
         public async Task Main(string token)
@@ -43,7 +45,7 @@ namespace Discord
             {
                 await ResyncCommandsInGuild(guild);
                 await FindAndPrepareGuildTiamatChannel(guild, Constatns.TiamatChannelName);
-                await UpdateMessageForGuild(guild);
+                await RunCommandForGuild(guild);
             }
         }
 
@@ -119,14 +121,23 @@ namespace Discord
         }
         #endregion
 
-        private async Task UpdateMessageForGuild(SocketGuild guild)
+        // If command is null - message will be only updated
+        private async Task RunCommandForGuild(SocketGuild guild, ICommand? command = null)
         {
             if(!_loadedServers.TryGetValue(guild.Id, out var serverInfo))
-            {
                 throw new UserMessageException("Server was not properly configured. Try to run `/create-channel`.");
-            }
 
             var channel = guild.GetTextChannel(serverInfo.ChannelId);
+
+            if(channel == null)
+                throw new UserMessageException("Server was not properly configured. Try to run `/create-channel`.");
+
+            if(await channel.GetMessageAsync(serverInfo.MessageId) == null)
+                throw new UserMessageException("Server was not properly configured. Try to run `/create-channel`.");
+
+            if(command != null)
+                serverInfo.InitiativeList.ExecuteCommand(command);
+
             await channel.ModifyMessageAsync(serverInfo.MessageId, messageProperties =>
             {
                 messageProperties.Content = serverInfo.GetDiscordMessage();
@@ -137,9 +148,10 @@ namespace Discord
         private string HandleUserException(Exception ex, string context)
         {
             Log.Error(ex, "{Context} failed: {errorMessage}", context, ex.Message);
-            return ex is UserMessageException umex ? umex.Message : "Unknown error :(";
+            return ex is UserMessageException umex ? umex.Message : "Unknown error :(\nTry to reconfigure bot with `/create-channel` or contact authors.";
         }
 
+        #region Slash commands handling 
         private async Task SlashCommandHandler(SocketSlashCommand command)
         {
             try
@@ -171,5 +183,34 @@ namespace Discord
         {
             await command.RespondAsync(Constatns.Commands.TiamatHelp.HelpResponseMessage, ephemeral: true);
         }
+
+        #endregion
+
+        #region Button handling
+        private async Task ButtonHandler(SocketMessageComponent button)
+        {
+            try
+            {
+                switch (button.Data.CustomId)
+                {
+                    case Constatns.Message.Button.Id:
+                        await HandleNextTurnButton(button);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = HandleUserException(ex, button.Data.CustomId);
+                await button.RespondAsync(message, ephemeral: true);
+            }
+        }
+
+        private async Task HandleNextTurnButton(SocketMessageComponent button)
+        {
+            var guild = ((SocketGuildChannel)button.Channel).Guild;
+            await RunCommandForGuild(guild, new NextTurnCommand());
+            await button.RespondAsync(Constatns.Message.Button.ButtonResponseMessage, ephemeral: true);
+        }
+        #endregion
     }
 }
