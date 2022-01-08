@@ -45,7 +45,20 @@ namespace InitiativeBot.Rolling.Modifiers
         {
             return _multiplier.ToString() + _roll.ToString();
         }
-    }
 
+        public override bool Equals(object? obj)
+        {
+            return obj switch
+            {
+                MultiplyingRollModifier r => r._multiplier == _multiplier && r._roll.Equals(_roll),
+                _ => false
+            };
+        }
+
+        public override int GetHashCode()
+        {
+            return _multiplier ^ _roll.GetHashCode();
+        }
+    }
    
 }

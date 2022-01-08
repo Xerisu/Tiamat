@@ -33,5 +33,19 @@ namespace InitiativeBot.Rolling
         {
             return $"d{_diceType}";
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj switch
+            {
+                Roll r => r._diceType == _diceType,
+                _ => false
+            };
+        }
+
+        public override int GetHashCode()
+        {
+            return _diceType ^ base.GetHashCode();
+        }
     }
 }

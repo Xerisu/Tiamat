@@ -39,5 +39,19 @@ namespace InitiativeBot.Rolling.Modifiers
                 roll2Str = "+" + roll2Str;
             return _roll.ToString() + roll2Str;
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj switch
+            {
+                AddDiceRollModifier r => r._roll.Equals(_roll) && r._roll2.Equals(_roll2),
+                _ => false
+            };
+        }
+
+        public override int GetHashCode()
+        {
+            return _roll.GetHashCode() ^ _roll2.GetHashCode();
+        }
     }
 }
