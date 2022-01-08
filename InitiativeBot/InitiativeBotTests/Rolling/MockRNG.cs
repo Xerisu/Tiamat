@@ -34,7 +34,7 @@ namespace InitiativeBotTests.Rolling
         /// <returns></returns>
         public int GetNthRoll(int dice, int n)
         {
-            return values[(n+1)%numberOfValues]%dice + 1;
+            return values[(n-1)%numberOfValues]%dice + 1;
         }
     }
 }

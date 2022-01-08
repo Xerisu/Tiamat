@@ -13,19 +13,20 @@ namespace InitiativeBotTests.Rolling.Modifiers
 {
     public class AddConstantRollModifierTests
     {
-        private const int _testSeed = 15;
-
         [Theory]
         [InlineData(20, 10)]
         [InlineData(20, 5)]
         [InlineData(12, -4)]
         public void AddConstantRollModifier_Should_ReturnExpectedValuesForVariableConst(int dice, int constant)
         {
-            int expect = RNG.GetStreamOfRandomNumbersFromSeed(_testSeed, dice).Take(1).ToArray()[0];
-            RNG.SetSeed(_testSeed);
+            MockRNG rng = new();
+
+            int expect = rng.GetNthRoll(dice, 1);
+
             IRoll rolling = new Roll(dice);
             rolling = new AddConstantRollModifier(rolling, constant);
-            int roll = rolling.RollDice();
+            int roll = rolling.RollDice(rng);
+
             Assert.Equal(expect + constant, roll);
         }
     }

@@ -12,19 +12,19 @@ namespace InitiativeBotTests.Rolling.Modifiers
 {
     public class AdvantageRollModifierTests
     {
-        private const int _testSeed = 15;
-
         [Theory]
         [InlineData(20)]
         [InlineData(12)]
         public void AdvantageDiceRollModifierTests_Should_ReturnExpectedValuesForVariableDices(int dice)
         {
-            int[] expectList = RNG.GetStreamOfRandomNumbersFromSeed(_testSeed, dice).Take(2).ToArray();
-            int expect = Math.Max(expectList[0],expectList[1]);
-            RNG.SetSeed(_testSeed);
+            MockRNG rng = new();
+
+            int expect = Math.Max(rng.GetNthRoll(dice, 1), rng.GetNthRoll(dice, 2));
+
             IRoll rolling = new Roll(dice);
             rolling = new AdvantageRollModifier(rolling);
-            int roll = rolling.RollDice();
+            int roll = rolling.RollDice(rng);
+
             Assert.Equal(expect, roll);
         }
     }
