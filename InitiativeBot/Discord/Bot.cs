@@ -21,6 +21,7 @@ namespace Discord
             _client = new DiscordSocketClient();
             _client.Log += Logging;
             _client.Ready += ResyncBot;
+            _client.JoinedGuild += ResyncBotInGuild;
             _client.SlashCommandExecuted += SlashCommandHandler;
             _client.ButtonExecuted += ButtonHandler;
         }
@@ -43,10 +44,15 @@ namespace Discord
         {
             foreach(var guild in _client.Guilds)
             {
-                await ResyncCommandsInGuild(guild);
-                await FindAndPrepareGuildTiamatChannel(guild, Constatns.TiamatChannelName);
-                await RunCommandForGuild(guild);
+                await ResyncBotInGuild(guild);
             }
+        }
+
+        private async Task ResyncBotInGuild(SocketGuild guild)
+        {
+            await ResyncCommandsInGuild(guild);
+            await FindAndPrepareGuildTiamatChannel(guild, Constatns.TiamatChannelName);
+            await RunCommandForGuild(guild);
         }
 
         #region Command resynchronization
@@ -62,6 +68,7 @@ namespace Discord
 
         private async Task ResyncCommandsInGuild(SocketGuild guild)
         {
+            await guild.DeleteApplicationCommandsAsync();
             foreach (var command in _commandToBuilders.Keys)
             {
                 await AddCommandInGuild(command, guild);
