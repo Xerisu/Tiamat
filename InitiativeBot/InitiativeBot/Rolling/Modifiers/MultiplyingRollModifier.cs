@@ -28,7 +28,16 @@ namespace InitiativeBot.Rolling.Modifiers
         /// <inheritdoc/>
         public int RollDice()
         {
-            return _multiplier * _roll.RollDice();
+            int betterMultiplier = _multiplier;
+            bool multiplierNegative = false;
+            if (betterMultiplier < 0)
+            {
+                betterMultiplier = betterMultiplier * -1;
+                multiplierNegative = true;
+            }
+            int roll = 0;
+            for (int i = 0; i < betterMultiplier; i++) roll += _roll.RollDice();
+            return multiplierNegative ? -roll : roll;
         }
 
         public override string ToString()
