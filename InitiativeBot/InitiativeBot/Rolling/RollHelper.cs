@@ -16,13 +16,13 @@ namespace InitiativeBot.Rolling
         /// <summary>
         /// Creates a roll from base die and list of modifiers.
         /// </summary>
-        /// <param name="baseDice">Base dice to use.</param>
+        /// <param name="baseDie">Base dice to use.</param>
         /// <param name="modifiers">List of modifiers.</param>
         /// <returns>A roll.</returns>
         /// <exception cref="ArgumentException">Roll has more than one (dis)advantage modifier.</exception>
-        public static IRoll BuildRollFromJoinModifiers(int baseDice, IJoinModifier[] modifiers)
+        public static IRoll BuildRollFromJoinModifiers(int baseDie, IJoinModifier[] modifiers)
         {
-            IRoll roll = new Roll(baseDice);
+            IRoll roll = new Roll(baseDie);
 
             var advantageRolls = modifiers.Where(modifier => modifier is AdvantageModifier || modifier is DisadvantageModifier);
             if (advantageRolls.Count() > 1)
