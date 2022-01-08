@@ -1,6 +1,8 @@
 ﻿using Discord.Net;
 using Discord.WebSocket;
 using InitiativeBot.Commands;
+using InitiativeBot.Parser;
+using InitiativeBot.Parser.JoinModifier;
 using Newtonsoft.Json;
 using Serilog;
 using System;
@@ -281,7 +283,16 @@ namespace Discord
             string modifiers = GetOptionalParameterFromCommand<string>(command, Constants.Commands.TiamatJoin.ModifiersParameterName, out _) ?? String.Empty;
             modifiers = Regex.Replace(modifiers, @"\s", "");
 
-            string[] parsedModifiers = new string[] { modifiers };
+            IJoinModifier[] parsedModifiers;
+
+            try
+            {
+                parsedModifiers = Parser.ParseJoinModifiersString(modifiers);
+            }
+            catch
+            {
+                throw new UserMessageException("Could not parse initiative modifiers.");
+            }
 
             await RunCommandForGuild(guild, new JoinCommand(playerName, parsedModifiers));
 
