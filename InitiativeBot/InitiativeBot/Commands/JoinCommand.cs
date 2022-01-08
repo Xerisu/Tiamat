@@ -1,4 +1,5 @@
 ﻿using InitiativeBot.InitiativeList;
+using InitiativeBot.Parser.JoinModifier;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,14 +14,14 @@ namespace InitiativeBot.Commands
     public class JoinCommand : ICommand
     {
         private readonly string _playerName;
-        private readonly string[] _modifiers;
+        private readonly IJoinModifier[] _modifiers;
 
         /// <summary>
         /// Contructor
         /// </summary>
         /// <param name="playerName">Name of the new player, if already exists - reroll initiative</param>
         /// <param name="modifiers">List of modifiers</param>
-        public JoinCommand(string playerName, string[] modifiers)
+        public JoinCommand(string playerName, IJoinModifier[] modifiers)
         {
             _playerName = playerName;
             _modifiers = modifiers;
