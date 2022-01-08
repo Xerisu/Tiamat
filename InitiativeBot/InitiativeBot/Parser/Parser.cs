@@ -18,7 +18,7 @@ namespace InitiativeBot.Parser
         /// <para>There are no checks if modifiers make sense - only if they are valid tokens.</para>
         /// </summary>
         /// <param name="modifiersString">String with all modifiers</param>
-        /// <returns>Array with all parsed modifiers</returns>
+        /// <returns>Array with all parsed modifiers in the order they were in the string</returns>
         /// <exception cref="ArgumentException">Could not parse modifiers</exception>
         public static IJoinModifier[] ParseJoinModifiersString(string modifiersString)
         {
@@ -38,12 +38,17 @@ namespace InitiativeBot.Parser
                 }
                 else if(i < str.Length - 1)
                 {
-                    if (new char[] { '-', '+', 'a', 'd' }.Contains(str[i+1])) {
+                    // New token can start with +, - or a (for advantage); dis is separate
+                    if (new char[] { '-', '+', 'a' }.Contains(str[i+1])) {
+                        modifiers.Add(GetModifierFromString(actualToken));
+                        actualToken = "";
+                    }
 
-                        // Have to exclude 'd' in case we have "a" in the token so wo do not skip "adv"
-                        if (actualToken == "a" && str[i + 1] == 'd')
-                            continue;
-
+                    // If we have at least 2 more tokens, and next 2 tokens are precisely "di" we
+                    //   end actual token so the next one should be "dis"
+                    //   in other cases 'd' can be part of dice (like 2d8) or "adv"
+                    if(i < str.Length - 2 && str[i+1] == 'd' && str[i+2] == 'i') 
+                    {
                         modifiers.Add(GetModifierFromString(actualToken));
                         actualToken = "";
                     }
@@ -79,10 +84,10 @@ namespace InitiativeBot.Parser
                 throw new ArgumentException($"Modifier {modifier} for the join command is not valid.", nameof(modifier));
             }
 
-            int multiplier = Int32.TryParse(diceModifierMatch.Captures[1]?.Value, out int mult) ? mult : 1;
-            if (diceModifierMatch.Captures[0] != null && diceModifierMatch.Captures[0].Value == "-")
+            int multiplier = Int32.TryParse(diceModifierMatch.Groups[2]?.Value, out int mult) ? mult : 1;
+            if (diceModifierMatch.Captures[0] != null && diceModifierMatch.Groups[1].Value == "-")
                 multiplier *= -1;
-            int dice = Int32.TryParse(diceModifierMatch.Captures[2]?.Value, out int d) ? (d > 1 ? d : 1) : 1;
+            int dice = Int32.TryParse(diceModifierMatch.Groups[3]?.Value, out int d) ? (d > 1 ? d : 1) : 1;
             return new DiceWithMultiplierModifier(multiplier, dice);
         }
     }
