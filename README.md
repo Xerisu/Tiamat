@@ -16,7 +16,7 @@ Done for a group of friends by [bored CS student](https://github.com/Lank891) an
 
 ## How to host it yourself:
 * Compile everything and run project `Discord`
-* Alternatively, use [Docker Image](https://www.docker.com/) - you can build it from `Dockerfile` in the main directory
+* Alternatively, use [Docker Image](https://www.docker.com/) - you can build it from `Dockerfile` in the `InitiativeBot` directory
 * You have to provide your discord bot token, there are two ways:
   * You can define environment variable `TIAMAT_TOKEN` with the token (probably you want to do it when using docker by using `-e` flag when running the container)
   * If environment variable is not found, file `./token` will be read and its content will be treated as the token
