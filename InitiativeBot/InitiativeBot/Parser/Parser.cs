@@ -13,7 +13,7 @@ namespace InitiativeBot.Parser
     /// </summary>
     public static class Parser
     {
-        private static char[] _charsThatStartsNewJoinToken = new char[] { '-', '+', 'a', 'd' };
+        private static readonly char[] _charsThatStartNewJoinToken = new char[] { '-', '+', 'a', 'd' };
 
         /// <summary>
         /// Parse string with modifiers of the roll (from join command) into list of modifiers.
@@ -40,7 +40,7 @@ namespace InitiativeBot.Parser
                 }
                 else if(i < str.Length - 1)
                 {
-                    if (_charsThatStartsNewJoinToken.Contains(str[i+1])) {
+                    if (_charsThatStartNewJoinToken.Contains(str[i+1])) {
                         modifiers.Add(GetModifierFromString(actualToken));
                         actualToken = "";
                     }
