@@ -10,7 +10,7 @@ namespace InitiativeBot.Commands
     /// <summary>
     /// Player is removed from the list
     /// </summary>
-    public class KillCommand : ICommand
+    public class RemoveCommand : ICommand
     {
         private readonly string _playerName;
 
@@ -18,7 +18,7 @@ namespace InitiativeBot.Commands
         /// Contructor
         /// </summary>
         /// <param name="playerName">Name of the player to kill</param>
-        public KillCommand(string playerName)
+        public RemoveCommand(string playerName)
         {
             _playerName = playerName;
         }
@@ -26,7 +26,7 @@ namespace InitiativeBot.Commands
         /// <inheritdoc/>
         public void Execute(IInitiativeList initiativeList)
         {
-            Console.WriteLine($"Kill command executed. Killed player: {_playerName}.");
+            Console.WriteLine($"Remove command executed. Rmoved player: {_playerName}.");
         }
     }
 }

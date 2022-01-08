@@ -256,7 +256,7 @@ namespace Discord
             var guild = ((SocketGuildChannel)command.Channel).Guild;
             string playerName = GetParameterFromCommand<string>(command, Constants.Commands.TiamatRemove.PlayerNameParameterName, out _);
 
-            await RunCommandForGuild(guild, new KillCommand(playerName));
+            await RunCommandForGuild(guild, new RemoveCommand(playerName));
             await command.RespondAsync(string.Format(Constants.Commands.TiamatRemove.ResponseMessage, playerName), ephemeral: true);
         }
 
