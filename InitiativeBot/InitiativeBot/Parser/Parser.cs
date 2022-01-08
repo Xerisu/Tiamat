@@ -79,7 +79,7 @@ namespace InitiativeBot.Parser
                 return new ConstantModifier(constant);
 
             var diceModifierMatch = Regex.Match(modifier, @"^(\+|-)?(\d*)d(\d+)$");
-            if(diceModifierMatch == null)
+            if(!diceModifierMatch.Success)
             {
                 throw new ArgumentException($"Modifier {modifier} for the join command is not valid.", nameof(modifier));
             }

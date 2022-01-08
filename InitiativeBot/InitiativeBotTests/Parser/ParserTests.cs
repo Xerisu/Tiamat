@@ -38,9 +38,11 @@ namespace InitiativeBotTests.Parser
                 new ConstantModifier(-2),
                 new ConstantModifier(2),
                 new DiceWithMultiplierModifier(-2, 2),
-                new DiceWithMultiplierModifier(2, 2), 
+                new DiceWithMultiplierModifier(2, 2),
                 new AdvantageModifier(),
                 new DisadvantageModifier()
+            } },
+            new object[] {"", new IJoinModifier[] {
             } },
         };
 
@@ -55,6 +57,17 @@ namespace InitiativeBotTests.Parser
             {
                 Assert.Equal(expectedModifiers[i], parseResult[i]);
             }
+        }
+
+        [Theory]
+        [InlineData("asasadasd")]
+        [InlineData("addis+2+2")]
+        [InlineData("+2d8-2diadv")]
+        [InlineData("--++")]
+        [InlineData("-2--")]
+        public void ParseJoinModifiersString_Should_ThrowArgumentException_When_InputIsInvalid(string modifierString)
+        {
+            Assert.Throws<ArgumentException>(() => InitiativeBot.Parser.Parser.ParseJoinModifiersString(modifierString));
         }
     }
 }
