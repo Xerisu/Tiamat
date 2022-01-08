@@ -181,13 +181,27 @@ namespace Discord
             });
         }
 
-        private T GetParameterFromCommand<T>(SocketSlashCommand command, string parameterName, out ApplicationCommandOptionType type)
+        private T GetRequiredParameterFromCommand<T>(SocketSlashCommand command, string parameterName, out ApplicationCommandOptionType type)
         {
             var parameter = command.Data.Options.FirstOrDefault(option => option.Name == parameterName);
 
             if (parameter == null)
             {
-                throw new UserMessageException(string.Format(Constants.Error.MissingParameterErrorMessage, parameterName));
+                throw new UserMessageException(string.Format(Constants.Error.MissingParameterErrorMessage, parameterName));   
+            }
+
+            type = parameter.Type;
+            return (T)parameter.Value;
+        }
+
+        private T? GetOptionalParameterFromCommand<T>(SocketSlashCommand command, string parameterName, out ApplicationCommandOptionType? type)
+        {
+            var parameter = command.Data.Options.FirstOrDefault(option => option.Name == parameterName);
+
+            if (parameter == null)
+            {
+                type = null;
+                return default;
             }
 
             type = parameter.Type;
@@ -254,7 +268,7 @@ namespace Discord
         private async Task HandleRemoveCommand(SocketSlashCommand command)
         {
             var guild = ((SocketGuildChannel)command.Channel).Guild;
-            string playerName = GetParameterFromCommand<string>(command, Constants.Commands.TiamatRemove.PlayerNameParameterName, out _);
+            string playerName = GetRequiredParameterFromCommand<string>(command, Constants.Commands.TiamatRemove.PlayerNameParameterName, out _);
 
             await RunCommandForGuild(guild, new RemoveCommand(playerName));
             await command.RespondAsync(string.Format(Constants.Commands.TiamatRemove.ResponseMessage, playerName), ephemeral: true);
@@ -263,13 +277,17 @@ namespace Discord
         private async Task HandleJoinCommand(SocketSlashCommand command)
         {
             var guild = ((SocketGuildChannel)command.Channel).Guild;
-            string playerName = GetParameterFromCommand<string>(command, Constants.Commands.TiamatJoin.PlayerNameParameterName, out _);
-            string modifiers = GetParameterFromCommand<string>(command, Constants.Commands.TiamatJoin.ModifiersParameterName, out _);
+            string playerName = GetRequiredParameterFromCommand<string>(command, Constants.Commands.TiamatJoin.PlayerNameParameterName, out _);
+            string modifiers = GetOptionalParameterFromCommand<string>(command, Constants.Commands.TiamatJoin.ModifiersParameterName, out _) ?? String.Empty;
             modifiers = Regex.Replace(modifiers, @"\s", "");
 
             string[] parsedModifiers = new string[] { modifiers };
 
             await RunCommandForGuild(guild, new JoinCommand(playerName, parsedModifiers));
+
+            if (String.IsNullOrWhiteSpace(modifiers))
+                modifiers = "<None>"; //Just for nicer response
+
             await command.RespondAsync(string.Format(Constants.Commands.TiamatJoin.ResponseMessage, playerName, modifiers), ephemeral: true);
         }
 
