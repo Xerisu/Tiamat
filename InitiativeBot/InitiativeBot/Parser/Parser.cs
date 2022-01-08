@@ -13,8 +13,6 @@ namespace InitiativeBot.Parser
     /// </summary>
     public static class Parser
     {
-        private static readonly char[] _charsThatStartNewJoinToken = new char[] { '-', '+', 'a', 'd' };
-
         /// <summary>
         /// Parse string with modifiers of the roll (from join command) into list of modifiers.
         /// <para>There are no checks if modifiers make sense - only if they are valid tokens.</para>
@@ -40,7 +38,12 @@ namespace InitiativeBot.Parser
                 }
                 else if(i < str.Length - 1)
                 {
-                    if (_charsThatStartNewJoinToken.Contains(str[i+1])) {
+                    if (new char[] { '-', '+', 'a', 'd' }.Contains(str[i+1])) {
+
+                        // Have to exclude 'd' in case we have "a" in the token so wo do not skip "adv"
+                        if (actualToken == "a" && str[i + 1] == 'd')
+                            continue;
+
                         modifiers.Add(GetModifierFromString(actualToken));
                         actualToken = "";
                     }
