@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InitiativeBot.RNG;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,7 @@ namespace InitiativeBot.Rolling.Modifiers
         }
 
         /// <inheritdoc/>
-        public int RollDice()
+        public int RollDice(IRNG rng)
         {
             int betterMultiplier = _multiplier;
             bool multiplierNegative = false;
@@ -36,7 +37,7 @@ namespace InitiativeBot.Rolling.Modifiers
                 multiplierNegative = true;
             }
             int roll = 0;
-            for (int i = 0; i < betterMultiplier; i++) roll += _roll.RollDice();
+            for (int i = 0; i < betterMultiplier; i++) roll += _roll.RollDice(rng);
             return multiplierNegative ? -roll : roll;
         }
 

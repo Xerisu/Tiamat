@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InitiativeBot.RNG;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,9 +28,9 @@ namespace InitiativeBot.Rolling.Modifiers
 
 
         /// <inheritdoc/>
-        public int RollDice()
+        public int RollDice(IRNG rng)
         {
-            return _roll.RollDice() + _constant;
+            return _roll.RollDice(rng) + _constant;
         }
 
         public override string ToString()

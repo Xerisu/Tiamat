@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InitiativeBot.RNG;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,10 +24,10 @@ namespace InitiativeBot.Rolling.Modifiers
         }
 
         /// <inheritdoc/>
-        public int RollDice()
+        public int RollDice(IRNG rng)
         {
-            int roll1 = _roll.RollDice();
-            int roll2 = _roll.RollDice();
+            int roll1 = _roll.RollDice(rng);
+            int roll2 = _roll.RollDice(rng);
             return Math.Min(roll1, roll2);
 
         }

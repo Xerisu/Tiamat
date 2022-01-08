@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InitiativeBot.RNG;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,6 @@ namespace InitiativeBot.Rolling
         /// Rolls a die.
         /// </summary>
         /// <returns>Roll result.</returns>
-        int RollDice();
+        int RollDice(IRNG rng);
     }
 }
