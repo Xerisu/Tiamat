@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Discord
 {
-    public static class Constatns
+    public static class Constants
     {
         public static class Commands
         {
@@ -35,7 +35,7 @@ namespace Discord
             {
                 public const string CommandName = "remove";
                 public const string CommandDescription = "Removes given player from the list.";
-                public const string ResponseMessage = "Player {} removed from the list."; //Should have 1 parameter: name of the player
+                public const string ResponseMessage = "Player {0} removed from the list."; //Should have 1 parameter: name of the player
 
                 public const string PlayerNameParameterName = "player-name";
                 public const string PlayerNameParameterDescription = "Name of the player.";
@@ -45,7 +45,7 @@ namespace Discord
             {
                 public const string CommandName = "join";
                 public const string CommandDescription = "Adds new player to the list.";
-                public const string ResponseMessage = "Player {} added to the list with modifiers {}."; //Should have 2 parameters: name of the player, list of modifiers
+                public const string ResponseMessage = "Player {0} added to the list with modifiers {1}."; //Should have 2 parameters: name of the player, list of modifiers
 
                 public const string PlayerNameParameterName = "player-name";
                 public const string PlayerNameParameterDescription = "Name of the player.";
@@ -75,6 +75,7 @@ namespace Discord
         {
             public const string UnknownErrorMessage = "Unknown error :frowning:\nTry to reconfigure bot with `/create-channel` or contact authors.";
             public const string ReconfigureServerErrorMessage = "Server was not properly configured. Try to run `/create-channel`.";
+            public const string MissingParameterErrorMessage = "Parameter `{0}` is missing."; //Should have 1 parameter: name of the missing parameter
         }
     }
 }

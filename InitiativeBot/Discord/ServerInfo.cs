@@ -24,7 +24,7 @@ namespace Discord
 
         public string GetDiscordMessage()
         {
-            string message = Constatns.Message.InitiativeListMessageCommonPart;
+            string message = Constants.Message.InitiativeListMessageCommonPart;
 
             foreach(var player in InitiativeList.Players)
             {
@@ -37,7 +37,7 @@ namespace Discord
 
             if(InitiativeList.Players.Count == 0)
             {
-                message += Constatns.Message.EmptyListMessage;
+                message += Constants.Message.EmptyListMessage;
             }
 
             return message;

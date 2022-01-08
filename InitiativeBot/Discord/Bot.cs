@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Discord
@@ -51,19 +52,43 @@ namespace Discord
         private async Task ResyncBotInGuild(SocketGuild guild)
         {
             await ResyncCommandsInGuild(guild);
-            await FindAndPrepareGuildTiamatChannel(guild, Constatns.TiamatChannelName);
+            await FindAndPrepareGuildTiamatChannel(guild, Constants.TiamatChannelName);
             await RunCommandForGuild(guild);
         }
 
         #region Command resynchronization
         private IReadOnlyDictionary<string, SlashCommandBuilder> _commandToBuilders = new Dictionary<string, SlashCommandBuilder>()
         {
-            [Constatns.Commands.TiamatSetup.CommandName] = new SlashCommandBuilder()
-                .WithName(Constatns.Commands.TiamatSetup.CommandName)
-                .WithDescription(Constatns.Commands.TiamatSetup.CommandDescription),
-            [Constatns.Commands.TiamatHelp.CommandName] = new SlashCommandBuilder()
-                .WithName(Constatns.Commands.TiamatHelp.CommandName)
-                .WithDescription(Constatns.Commands.TiamatHelp.CommandDescription),
+            [Constants.Commands.TiamatSetup.CommandName] = new SlashCommandBuilder()
+                .WithName(Constants.Commands.TiamatSetup.CommandName)
+                .WithDescription(Constants.Commands.TiamatSetup.CommandDescription),
+            [Constants.Commands.TiamatHelp.CommandName] = new SlashCommandBuilder()
+                .WithName(Constants.Commands.TiamatHelp.CommandName)
+                .WithDescription(Constants.Commands.TiamatHelp.CommandDescription),
+            [Constants.Commands.TiamatClear.CommandName] = new SlashCommandBuilder()
+                .WithName(Constants.Commands.TiamatClear.CommandName)
+                .WithDescription(Constants.Commands.TiamatClear.CommandDescription),
+            [Constants.Commands.TiamatRemove.CommandName] = new SlashCommandBuilder()
+                .WithName(Constants.Commands.TiamatRemove.CommandName)
+                .WithDescription(Constants.Commands.TiamatRemove.CommandDescription)
+                .AddOption(
+                    Constants.Commands.TiamatRemove.PlayerNameParameterName, 
+                    ApplicationCommandOptionType.String, 
+                    Constants.Commands.TiamatRemove.PlayerNameParameterDescription,
+                    isRequired: true),
+            [Constants.Commands.TiamatJoin.CommandName] = new SlashCommandBuilder()
+                .WithName(Constants.Commands.TiamatJoin.CommandName)
+                .WithDescription(Constants.Commands.TiamatJoin.CommandDescription)
+                .AddOption(
+                    Constants.Commands.TiamatJoin.PlayerNameParameterName,
+                    ApplicationCommandOptionType.String,
+                    Constants.Commands.TiamatJoin.PlayerNameParameterDescription,
+                    isRequired: true)
+                .AddOption(
+                    Constants.Commands.TiamatJoin.ModifiersParameterName,
+                    ApplicationCommandOptionType.String,
+                    Constants.Commands.TiamatJoin.ModifiersParameterDescription,
+                    isRequired: false),
         };
 
         private async Task ResyncCommandsInGuild(SocketGuild guild)
@@ -112,10 +137,10 @@ namespace Discord
 
         private async Task<ulong> SendIntermediateSetupMessage(ITextChannel channel)
         {
-            var emoji = String.IsNullOrWhiteSpace(Constatns.Message.Button.Emote) ? null : new Emoji(Constatns.Message.Button.Emote);
+            var emoji = String.IsNullOrWhiteSpace(Constants.Message.Button.Emote) ? null : new Emoji(Constants.Message.Button.Emote);
             var buttonBuilder = new ComponentBuilder()
-                .WithButton(Constatns.Message.Button.Label, Constatns.Message.Button.Id, Constatns.Message.Button.Style, emoji);
-            var message = await channel.SendMessageAsync(Constatns.Message.IntermediateStepMessage, components: buttonBuilder.Build());
+                .WithButton(Constants.Message.Button.Label, Constants.Message.Button.Id, Constants.Message.Button.Style, emoji);
+            var message = await channel.SendMessageAsync(Constants.Message.IntermediateStepMessage, components: buttonBuilder.Build());
             return message.Id;
         }
 
@@ -128,19 +153,20 @@ namespace Discord
         }
         #endregion
 
+        #region Utility
         // If command is null - message will be only updated
         private async Task RunCommandForGuild(SocketGuild guild, ICommand? command = null)
         {
             if(!_loadedServers.TryGetValue(guild.Id, out var serverInfo))
-                throw new UserMessageException(Constatns.Error.ReconfigureServerErrorMessage);
+                throw new UserMessageException(Constants.Error.ReconfigureServerErrorMessage);
 
             var channel = guild.GetTextChannel(serverInfo.ChannelId);
 
             if(channel == null)
-                throw new UserMessageException(Constatns.Error.ReconfigureServerErrorMessage);
+                throw new UserMessageException(Constants.Error.ReconfigureServerErrorMessage);
 
             if(await channel.GetMessageAsync(serverInfo.MessageId) == null)
-                throw new UserMessageException(Constatns.Error.ReconfigureServerErrorMessage);
+                throw new UserMessageException(Constants.Error.ReconfigureServerErrorMessage);
 
             if(command != null)
             {
@@ -155,12 +181,26 @@ namespace Discord
             });
         }
 
+        private T GetParameterFromCommand<T>(SocketSlashCommand command, string parameterName, out ApplicationCommandOptionType type)
+        {
+            var parameter = command.Data.Options.FirstOrDefault(option => option.Name == parameterName);
+
+            if (parameter == null)
+            {
+                throw new UserMessageException(string.Format(Constants.Error.MissingParameterErrorMessage, parameterName));
+            }
+
+            type = parameter.Type;
+            return (T)parameter.Value;
+        }
+
         // Returns message that should be sent to the user as a result
         private string HandleUserException(Exception ex, string context)
         {
             Log.Error(ex, "{Context} failed: {errorMessage}", context, ex.Message);
-            return ex is UserMessageException umex ? umex.Message : Constatns.Error.UnknownErrorMessage;
+            return ex is UserMessageException umex ? umex.Message : Constants.Error.UnknownErrorMessage;
         }
+        #endregion
 
         #region Slash commands handling 
         private async Task SlashCommandHandler(SocketSlashCommand command)
@@ -169,11 +209,20 @@ namespace Discord
             {
                 switch (command.Data.Name)
                 {
-                    case Constatns.Commands.TiamatSetup.CommandName:
+                    case Constants.Commands.TiamatSetup.CommandName:
                         await HandleSetupCommand(command);
                         break;
-                    case Constatns.Commands.TiamatHelp.CommandName:
+                    case Constants.Commands.TiamatHelp.CommandName:
                         await HandleHelpCommand(command);
+                        break;
+                    case Constants.Commands.TiamatClear.CommandName:
+                        await HandleClearCommand(command);
+                        break;
+                    case Constants.Commands.TiamatRemove.CommandName:
+                        await HandleRemoveCommand(command);
+                        break;
+                    case Constants.Commands.TiamatJoin.CommandName:
+                        await HandleJoinCommand(command);
                         break;
                 }
             }
@@ -186,13 +235,42 @@ namespace Discord
 
         private async Task HandleSetupCommand(SocketSlashCommand command)
         {
-            await FindAndPrepareGuildTiamatChannel(((SocketGuildChannel)command.Channel).Guild, Constatns.TiamatChannelName);
-            await command.RespondAsync(Constatns.Commands.TiamatSetup.ResponseMessage);
+            await FindAndPrepareGuildTiamatChannel(((SocketGuildChannel)command.Channel).Guild, Constants.TiamatChannelName);
+            await command.RespondAsync(Constants.Commands.TiamatSetup.ResponseMessage);
         }
 
         private async Task HandleHelpCommand(SocketSlashCommand command)
         {
-            await command.RespondAsync(Constatns.Commands.TiamatHelp.ResponseMessage, ephemeral: true);
+            await command.RespondAsync(Constants.Commands.TiamatHelp.ResponseMessage, ephemeral: true);
+        }
+
+        private async Task HandleClearCommand(SocketSlashCommand command)
+        {
+            var guild = ((SocketGuildChannel)command.Channel).Guild;
+            await RunCommandForGuild(guild, new ClearCommand());
+            await command.RespondAsync(Constants.Commands.TiamatClear.ResponseMessage, ephemeral: true);
+        }
+
+        private async Task HandleRemoveCommand(SocketSlashCommand command)
+        {
+            var guild = ((SocketGuildChannel)command.Channel).Guild;
+            string playerName = GetParameterFromCommand<string>(command, Constants.Commands.TiamatRemove.PlayerNameParameterName, out _);
+
+            await RunCommandForGuild(guild, new KillCommand(playerName));
+            await command.RespondAsync(string.Format(Constants.Commands.TiamatRemove.ResponseMessage, playerName), ephemeral: true);
+        }
+
+        private async Task HandleJoinCommand(SocketSlashCommand command)
+        {
+            var guild = ((SocketGuildChannel)command.Channel).Guild;
+            string playerName = GetParameterFromCommand<string>(command, Constants.Commands.TiamatJoin.PlayerNameParameterName, out _);
+            string modifiers = GetParameterFromCommand<string>(command, Constants.Commands.TiamatJoin.ModifiersParameterName, out _);
+            modifiers = Regex.Replace(modifiers, @"\s", "");
+
+            string[] parsedModifiers = new string[] { modifiers };
+
+            await RunCommandForGuild(guild, new JoinCommand(playerName, parsedModifiers));
+            await command.RespondAsync(string.Format(Constants.Commands.TiamatJoin.ResponseMessage, playerName, modifiers), ephemeral: true);
         }
 
         #endregion
@@ -204,7 +282,7 @@ namespace Discord
             {
                 switch (button.Data.CustomId)
                 {
-                    case Constatns.Message.Button.Id:
+                    case Constants.Message.Button.Id:
                         await HandleNextTurnButton(button);
                         break;
                 }
