@@ -47,7 +47,11 @@ namespace InitiativeBot.Rolling
             foreach(var modifier in diceModifiers)
             {
                 if (modifier is DiceWithMultiplierModifier dm)
-                    roll = new MultiplyingRollModifier(new AddDiceRollModifier(roll, new Roll(dm.Dice)), dm.Multiplier);
+                {
+                    IRoll addedRoll = new Roll(dm.Dice);
+                    addedRoll = new MultiplyingRollModifier(addedRoll, dm.Multiplier);
+                    roll = new AddDiceRollModifier(roll, addedRoll);
+                }
             }
 
             return roll;
