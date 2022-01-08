@@ -19,6 +19,17 @@ namespace InitiativeBot.Parser.JoinModifier
     /// </summary>
     public class AdvantageModifier : IJoinModifier
     {
+        public override bool Equals(object? obj)
+        {
+            if (obj == null)
+                return false;
+            return obj is AdvantageModifier;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
     /// <summary>
@@ -26,6 +37,17 @@ namespace InitiativeBot.Parser.JoinModifier
     /// </summary>
     public class DisadvantageModifier : IJoinModifier
     {
+        public override bool Equals(object? obj)
+        {
+            if (obj == null)
+                return false;
+            return obj is DisadvantageModifier;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
     /// <summary>
@@ -45,6 +67,20 @@ namespace InitiativeBot.Parser.JoinModifier
         public ConstantModifier(int constant)
         {
             Constant = constant;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj switch
+            {
+                ConstantModifier cm => cm.Constant == Constant,
+                _ => false
+            };
+        }
+
+        public override int GetHashCode()
+        {
+            return Constant ^ base.GetHashCode();
         }
     }
 
@@ -71,6 +107,20 @@ namespace InitiativeBot.Parser.JoinModifier
         {
             Modifier = multiplier;
             Dice = dice;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj switch
+            {
+                DiceWithMultiplierModifier dwmm => dwmm.Dice == Dice && dwmm.Modifier == Modifier,
+                _ => false
+            };
+        }
+
+        public override int GetHashCode()
+        {
+            return (Dice * Modifier) ^ base.GetHashCode();
         }
     }
     
