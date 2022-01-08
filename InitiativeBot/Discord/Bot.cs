@@ -187,12 +187,12 @@ namespace Discord
         private async Task HandleSetupCommand(SocketSlashCommand command)
         {
             await FindAndPrepareGuildTiamatChannel(((SocketGuildChannel)command.Channel).Guild, Constatns.TiamatChannelName);
-            await command.RespondAsync(Constatns.Commands.TiamatSetup.SetupResponseMessage);
+            await command.RespondAsync(Constatns.Commands.TiamatSetup.ResponseMessage);
         }
 
         private async Task HandleHelpCommand(SocketSlashCommand command)
         {
-            await command.RespondAsync(Constatns.Commands.TiamatHelp.HelpResponseMessage, ephemeral: true);
+            await command.RespondAsync(Constatns.Commands.TiamatHelp.ResponseMessage, ephemeral: true);
         }
 
         #endregion

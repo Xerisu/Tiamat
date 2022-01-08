@@ -14,14 +14,44 @@ namespace Discord
             {
                 public const string CommandName = "create-channel";
                 public const string CommandDescription = "Creates new channel for Tiamat in case old one was removed.";
-                public const string SetupResponseMessage = "Channel created and ready to use.";
+                public const string ResponseMessage = "Channel created and ready to use.";
             }
 
             public static class TiamatHelp
             {
                 public const string CommandName = "help";
                 public const string CommandDescription = "Shows help about Tiamat.";
-                public const string HelpResponseMessage = "Tiamat usage:\nTo configure channel use commad `/setup`.\nThen just use new channel lol.";
+                public const string ResponseMessage = "Tiamat usage:\nTo configure channel use commad `/setup`.\nThen just use new channel lol.";
+            }
+
+            public static class TiamatClear
+            {
+                public const string CommandName = "clear";
+                public const string CommandDescription = "Clears the initiative list.";
+                public const string ResponseMessage = "List cleared.";
+            }
+
+            public static class TiamatRemove
+            {
+                public const string CommandName = "remove";
+                public const string CommandDescription = "Removes given player from the list.";
+                public const string ResponseMessage = "Player {} removed from the list."; //Should have 1 parameter: name of the player
+
+                public const string PlayerNameParameterName = "player-name";
+                public const string PlayerNameParameterDescription = "Name of the player.";
+            }
+
+            public static class TiamatJoin
+            {
+                public const string CommandName = "join";
+                public const string CommandDescription = "Adds new player to the list.";
+                public const string ResponseMessage = "Player {} added to the list with modifiers {}."; //Should have 2 parameters: name of the player, list of modifiers
+
+                public const string PlayerNameParameterName = "player-name";
+                public const string PlayerNameParameterDescription = "Name of the player.";
+
+                public const string ModifiersParameterName = "modifiers";
+                public const string ModifiersParameterDescription = "Initiative modifiers of the player.";
             }
         }
 
@@ -38,8 +68,6 @@ namespace Discord
                 public const string Id = "next-turn-button";
                 public const string Emote = "➡️"; //Must be 1 pure UTF-8 emote or nothing/whitespace
                 public const ButtonStyle Style = ButtonStyle.Secondary;
-
-                public const string ButtonResponseMessage = "Moved to the next player.";
             }
         }
 
