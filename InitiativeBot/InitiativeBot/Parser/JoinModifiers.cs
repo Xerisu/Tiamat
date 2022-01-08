@@ -96,7 +96,7 @@ namespace InitiativeBot.Parser.JoinModifier
         /// <summary>
         /// Multiplier to use
         /// </summary>
-        public int Modifier { get; }
+        public int Multiplier { get; }
 
         /// <summary>
         /// Constructor
@@ -105,7 +105,7 @@ namespace InitiativeBot.Parser.JoinModifier
         /// <param name="dice">Dice to roll</param>
         public DiceWithMultiplierModifier(int multiplier, int dice)
         {
-            Modifier = multiplier;
+            Multiplier = multiplier;
             Dice = dice;
         }
 
@@ -113,14 +113,14 @@ namespace InitiativeBot.Parser.JoinModifier
         {
             return obj switch
             {
-                DiceWithMultiplierModifier dwmm => dwmm.Dice == Dice && dwmm.Modifier == Modifier,
+                DiceWithMultiplierModifier dwmm => dwmm.Dice == Dice && dwmm.Multiplier == Multiplier,
                 _ => false
             };
         }
 
         public override int GetHashCode()
         {
-            return (Dice * Modifier) ^ base.GetHashCode();
+            return (Dice * Multiplier) ^ base.GetHashCode();
         }
     }
     
