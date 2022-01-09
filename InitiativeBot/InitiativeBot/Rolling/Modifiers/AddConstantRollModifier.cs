@@ -37,5 +37,19 @@ namespace InitiativeBot.Rolling.Modifiers
         {
             return _roll.ToString() + _constant.ToString("+0;-#");
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj switch
+            {
+                AddConstantRollModifier r => r._constant == _constant && r._roll.Equals(_roll),
+                _ => false
+            };
+        }
+
+        public override int GetHashCode()
+        {
+            return _constant ^ _roll.GetHashCode();
+        }
     }
 }

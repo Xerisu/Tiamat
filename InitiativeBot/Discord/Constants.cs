@@ -55,7 +55,11 @@ namespace Discord
             }
         }
 
-        public const string TiamatChannelName = "tiamat-initiative-list";
+        public static class BotSettings
+        {
+            public const string ChannelName = "tiamat-initiative-list";
+            public const int DefaultDie = 20;
+        }
 
         public static class Message
         {
@@ -76,6 +80,7 @@ namespace Discord
             public const string UnknownErrorMessage = "Unknown error :frowning:\nTry to reconfigure bot with `/create-channel` or contact authors.";
             public const string ReconfigureServerErrorMessage = "Server was not properly configured. Try to run `/create-channel`.";
             public const string MissingParameterErrorMessage = "Parameter `{0}` is missing."; //Should have 1 parameter: name of the missing parameter
+            public const string InvalidJoinModifiersErrorMessage = "Modifiers are invalid.";
         }
     }
 }

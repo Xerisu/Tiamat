@@ -35,5 +35,19 @@ namespace InitiativeBot.Rolling.Modifiers
         {
             return $"adv({_roll})";
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj switch
+            {
+                AdvantageRollModifier r => r._roll.Equals(_roll),
+                _ => false
+            };
+        }
+
+        public override int GetHashCode()
+        {
+            return _roll.GetHashCode() ^ 0x0a01ba10;
+        }
     }
 }

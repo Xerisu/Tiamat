@@ -42,8 +42,7 @@ namespace InitiativeBotTests.Parser
                 new AdvantageModifier(),
                 new DisadvantageModifier()
             } },
-            new object[] {"", new IJoinModifier[] {
-            } },
+            new object[] {"", Array.Empty<IJoinModifier>() },
         };
 
         [Theory]

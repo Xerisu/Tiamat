@@ -54,7 +54,7 @@ namespace Discord
         private async Task ResyncBotInGuild(SocketGuild guild)
         {
             await ResyncCommandsInGuild(guild);
-            await FindAndPrepareGuildTiamatChannel(guild, Constants.TiamatChannelName);
+            await FindAndPrepareGuildTiamatChannel(guild, Constants.BotSettings.ChannelName);
             await RunCommandForGuild(guild);
         }
 
@@ -251,7 +251,7 @@ namespace Discord
 
         private async Task HandleSetupCommand(SocketSlashCommand command)
         {
-            await FindAndPrepareGuildTiamatChannel(((SocketGuildChannel)command.Channel).Guild, Constants.TiamatChannelName);
+            await FindAndPrepareGuildTiamatChannel(((SocketGuildChannel)command.Channel).Guild, Constants.BotSettings.ChannelName);
             await command.RespondAsync(Constants.Commands.TiamatSetup.ResponseMessage);
         }
 
@@ -288,13 +288,13 @@ namespace Discord
             try
             {
                 parsedModifiers = Parser.ParseJoinModifiersString(modifiers);
+                await RunCommandForGuild(guild, new JoinCommand(playerName, Constants.BotSettings.DefaultDie, parsedModifiers));
             }
-            catch
+            catch(ArgumentException)
             {
-                throw new UserMessageException("Could not parse initiative modifiers.");
+                throw new UserMessageException(Constants.Error.InvalidJoinModifiersErrorMessage);
             }
-
-            await RunCommandForGuild(guild, new JoinCommand(playerName, parsedModifiers));
+            
 
             if (String.IsNullOrWhiteSpace(modifiers))
                 modifiers = "<None>"; //Just for nicer response
