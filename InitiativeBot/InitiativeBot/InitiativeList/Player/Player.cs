@@ -20,7 +20,7 @@ namespace InitiativeBot.InitiativeList.Player
     /// <summary>
     /// Player on the initiative list
     /// </summary>
-    public struct Player
+    public class Player : IComparable<Player>
     {
         /// <summary>
         /// Name of the player
@@ -48,6 +48,13 @@ namespace InitiativeBot.InitiativeList.Player
             Name = name;
             State = playerState;
             Initiative = initiative;
+        }
+
+        public int CompareTo(Player? other)
+        {
+            if (other == null) return -1;
+            return other.Initiative - Initiative;
+
         }
     }
 }

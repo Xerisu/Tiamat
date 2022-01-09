@@ -1,4 +1,5 @@
 ﻿using InitiativeBot.Commands;
+using InitiativeBot.RNG;
 using InitiativeBot.Rolling;
 
 using System;
@@ -15,19 +16,30 @@ namespace InitiativeBot.InitiativeList
     public class InitiativeList : IInitiativeList
     {
         private readonly List<Player.Player> _players = new();
+        private readonly IRNG _rng = new RNG.RNG();
+        private int _activePlayerIndex = 0;
+        private int _roundIndex = 0;
 
+        /// <inheritdoc/>
+        public int Round => _roundIndex;
         /// <inheritdoc/>
         public IReadOnlyList<Player.Player> Players => _players;
 
+        /// <inheritdoc/>
         public void AddPlayer(string name, IRoll roll)
         {
-            throw new NotImplementedException();
+            _players.RemoveAll(p => p.Name == name);
+            Player.Player player = new(name, roll.RollDice(_rng));
+            _players.Add(player);
+            _players.Sort();
         }
 
         /// <inheritdoc/>
         public void ClearList()
         {
-            throw new NotImplementedException();
+            _players.Clear();
+            _roundIndex = 0;
+            _activePlayerIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -36,16 +48,29 @@ namespace InitiativeBot.InitiativeList
             command.Execute(this);
         }
 
+        private void NextRound()
+        {
+            _activePlayerIndex = 0;
+            _roundIndex += 1;
+            _players.ForEach(p =>
+            {
+                if (p.State == Player.PlayerState.unconscious) { p.State = Player.PlayerState.active; }
+            });
+        }
+
         /// <inheritdoc/>
         public void NextTurn()
         {
-            throw new NotImplementedException();
+            if (_players.Count == 0) { return; }
+            _activePlayerIndex++;
+            while (_activePlayerIndex < _players.Count && _players[_activePlayerIndex].State != Player.PlayerState.active) { _activePlayerIndex++; }
+            if (_activePlayerIndex >= _players.Count) { NextRound(); }
         }
 
         /// <inheritdoc/>
         public void RemovePlayer(string name)
         {
-            throw new NotImplementedException();
+            _players.RemoveAll(p => p.Name == name);
         }
     }
 }

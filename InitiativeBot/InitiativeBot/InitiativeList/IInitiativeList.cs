@@ -20,6 +20,11 @@ namespace InitiativeBot.InitiativeList
         IReadOnlyList<Player.Player> Players { get; }
 
         /// <summary>
+        /// Current round.
+        /// </summary>
+        int Round { get; }
+
+        /// <summary>
         /// Executes a command
         /// </summary>
         /// <param name="command">Command to execute</param>
