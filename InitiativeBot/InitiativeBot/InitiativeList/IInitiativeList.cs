@@ -23,6 +23,10 @@ namespace InitiativeBot.InitiativeList
         /// Current round.
         /// </summary>
         int Round { get; }
+        /// <summary>
+        /// Current player taking turn.
+        /// </summary>
+        int ActivePlayerIndex { get; }
 
         /// <summary>
         /// Executes a command

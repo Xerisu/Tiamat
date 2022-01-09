@@ -36,7 +36,7 @@ namespace InitiativeBot.Commands
 
         public override string ToString()
         {
-            return $"Player {_playerName} added to a initiative list with modifiers {_roll}";
+            return $"Player {_playerName} added to a initiative list with roll {_roll}";
         }
     }
 }

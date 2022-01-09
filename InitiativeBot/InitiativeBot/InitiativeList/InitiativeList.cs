@@ -23,6 +23,8 @@ namespace InitiativeBot.InitiativeList
         /// <inheritdoc/>
         public int Round => _roundIndex;
         /// <inheritdoc/>
+        public int ActivePlayerIndex => _activePlayerIndex;
+        /// <inheritdoc/>
         public IReadOnlyList<Player.Player> Players => _players;
 
         /// <inheritdoc/>
@@ -54,7 +56,7 @@ namespace InitiativeBot.InitiativeList
             _roundIndex += 1;
             _players.ForEach(p =>
             {
-                if (p.State == Player.PlayerState.unconscious) { p.State = Player.PlayerState.active; }
+                if (p.State == Player.PlayerState.unactive) { p.State = Player.PlayerState.active; }
             });
         }
 
