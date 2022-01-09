@@ -23,7 +23,12 @@ namespace InitiativeBot.Commands
         /// <inheritdoc/>
         public void Execute(IInitiativeList initiativeList)
         {
-            Console.WriteLine("Next turn command executed.");
+            initiativeList.NextTurn();
+        }
+
+        public override string ToString()
+        {
+            return "Switched to the next turn";
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using InitiativeBot.Commands;
+using InitiativeBot.Rolling;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,5 +24,28 @@ namespace InitiativeBot.InitiativeList
         /// </summary>
         /// <param name="command">Command to execute</param>
         void ExecuteCommand(ICommand command);
+
+        /// <summary>
+        /// Adding player to initiative list.
+        /// </summary>
+        /// <param name="name">Name of a player.</param>
+        /// <param name="roll">Initiative roll.</param>
+        void AddPlayer(string name, IRoll roll);
+
+        /// <summary>
+        /// Going to the next turn.
+        /// </summary>
+        void NextTurn();
+
+        /// <summary>
+        /// Removing player from the initiative list.
+        /// </summary>
+        /// <param name="name">Name of a player.</param>
+        void RemovePlayer(string name);
+
+        /// <summary>
+        /// Clearing initiative list.
+        /// </summary>
+        void ClearList();
     }
 }

@@ -26,7 +26,12 @@ namespace InitiativeBot.Commands
         /// <inheritdoc/>
         public void Execute(IInitiativeList initiativeList)
         {
-            Console.WriteLine($"Remove command executed. Rmoved player: {_playerName}.");
+            initiativeList.RemovePlayer(_playerName);
+        }
+
+        public override string ToString()
+        {
+            return $"Player {_playerName} removed from the list";
         }
     }
 }
