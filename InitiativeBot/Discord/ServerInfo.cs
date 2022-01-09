@@ -24,9 +24,10 @@ namespace Discord
 
         public string GetDiscordMessage()
         {
-            string message = Constants.Message.InitiativeListMessageCommonPart;
-
-            foreach(var player in InitiativeList.Players)
+            string message = InitiativeList.Round == 0 ? Constants.Message.RoundZeroMessage : string.Format(Constants.Message.InCombatRoundMessage, InitiativeList.Round);
+            message += Constants.Message.InitiativeListMessageCommonPart;
+            
+            foreach (var player in InitiativeList.Players)
             {
                 if (player.State == InitiativeBot.InitiativeList.Player.PlayerState.unactive)
                     message += "||";
