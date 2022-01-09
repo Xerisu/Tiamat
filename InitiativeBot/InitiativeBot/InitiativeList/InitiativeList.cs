@@ -30,10 +30,12 @@ namespace InitiativeBot.InitiativeList
         /// <inheritdoc/>
         public void AddPlayer(string name, IRoll roll)
         {
-            _players.RemoveAll(p => p.Name == name);
+            RemovePlayer(name);
             Player.Player player = new(name, roll.RollDice(_rng));
             _players.Add(player);
             _players.Sort();
+            int addedIndex = _players.FindIndex(p => p.Name == name);
+            if (addedIndex < _activePlayerIndex) _activePlayerIndex++;
         }
 
         /// <inheritdoc/>
@@ -72,7 +74,12 @@ namespace InitiativeBot.InitiativeList
         /// <inheritdoc/>
         public void RemovePlayer(string name)
         {
-            _players.RemoveAll(p => p.Name == name);
+            int deletedIndex = _players.FindIndex(p => p.Name == name);
+            if (deletedIndex != -1)
+            {
+                _players.RemoveAt(deletedIndex);
+                if (deletedIndex < _activePlayerIndex) { _activePlayerIndex--; }
+            }
         }
     }
 }
