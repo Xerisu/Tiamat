@@ -19,7 +19,7 @@ namespace Discord
         {
             ChannelId = channelId;
             MessageId = messageId;
-            InitiativeList = new InitiativeList();
+            InitiativeList = new InitiativeList(new List<InitiativeBot.InitiativeList.Player.Player>(), new InitiativeBot.RNG.RNG());
         }
 
         public string GetDiscordMessage()

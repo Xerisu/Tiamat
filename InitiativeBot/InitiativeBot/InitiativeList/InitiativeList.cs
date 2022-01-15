@@ -15,8 +15,8 @@ namespace InitiativeBot.InitiativeList
     /// </summary>
     public class InitiativeList : IInitiativeList
     {
-        private readonly List<Player.Player> _players = new();
-        private readonly IRNG _rng = new RNG.RNG();
+        private readonly List<Player.Player> _players;
+        private readonly IRNG _rng;
         private int _activePlayerIndex = 0;
         private int _roundIndex = 0;
 
@@ -26,6 +26,12 @@ namespace InitiativeBot.InitiativeList
         public int ActivePlayerIndex => _activePlayerIndex;
         /// <inheritdoc/>
         public IReadOnlyList<Player.Player> Players => _players;
+
+        public InitiativeList(List<Player.Player> players, IRNG rng)
+        {
+            _players = players;
+            _rng = rng;
+        }
 
         /// <inheritdoc/>
         public void AddPlayer(string name, IRoll roll)
