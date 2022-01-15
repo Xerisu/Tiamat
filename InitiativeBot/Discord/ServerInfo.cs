@@ -30,14 +30,14 @@ namespace Discord
             for (int i = 0; i < InitiativeList.Players.Count; i++)
             {
                 var player = InitiativeList.Players[i];
-                if (player.State == InitiativeBot.InitiativeList.Player.PlayerState.unactive)
+                if (player.State == InitiativeBot.InitiativeList.Player.PlayerState.inactive)
                     message += "||";
                 if (InitiativeList.Round != 0 && i == InitiativeList.ActivePlayerIndex)
                     message += "**";
                 message += $"`[{player.Initiative,2}]` {player.Name}";
                 if (InitiativeList.Round != 0 && i == InitiativeList.ActivePlayerIndex)
                     message += "**";
-                if (player.State == InitiativeBot.InitiativeList.Player.PlayerState.unactive)
+                if (player.State == InitiativeBot.InitiativeList.Player.PlayerState.inactive)
                     message += "||";
                 message += "\n";
             }

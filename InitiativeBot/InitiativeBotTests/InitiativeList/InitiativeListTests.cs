@@ -30,7 +30,7 @@ namespace InitiativeBotTests.InitiativeList
             var initiativeList = new InitiativeBot.InitiativeList.InitiativeList(_mockInitiativeList, new MockRNG());
             Assert.Equal(0, initiativeList.Round);
             Assert.Equal(0, initiativeList.ActivePlayerIndex);
-            Assert.Equal(PlayerState.unactive, initiativeList.Players[0].State);
+            Assert.Equal(PlayerState.inactive, initiativeList.Players[0].State);
             initiativeList.NextTurn();
             Assert.Equal("Seika", initiativeList.Players[initiativeList.ActivePlayerIndex].Name);
             Assert.Equal(PlayerState.active, initiativeList.Players[initiativeList.ActivePlayerIndex].State);
@@ -105,7 +105,7 @@ namespace InitiativeBotTests.InitiativeList
             Assert.Equal("Seika", initiativeList.Players[initiativeList.ActivePlayerIndex].Name);
             initiativeList.AddPlayer("Kamień", new Roll(101));
             Assert.Equal("Kamień", initiativeList.Players[initiativeList.ActivePlayerIndex+1].Name);
-            Assert.Equal(PlayerState.unactive, initiativeList.Players[initiativeList.ActivePlayerIndex+1].State);
+            Assert.Equal(PlayerState.inactive, initiativeList.Players[initiativeList.ActivePlayerIndex+1].State);
 
         }
     }
