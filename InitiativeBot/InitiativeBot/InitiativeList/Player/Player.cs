@@ -12,7 +12,7 @@ namespace InitiativeBot.InitiativeList.Player
     public enum PlayerState
     {
         active,
-        unactive,
+        inactive,
         unconscious,
         dead
     }
@@ -43,7 +43,7 @@ namespace InitiativeBot.InitiativeList.Player
         /// <param name="name">Name of the player</param>
         /// <param name="initiative">State of the player</param>
         /// <param name="playerState">Initiative of the player</param>
-        public Player(string name, int initiative, PlayerState playerState = PlayerState.unactive)
+        public Player(string name, int initiative, PlayerState playerState = PlayerState.inactive)
         {
             Name = name;
             State = playerState;

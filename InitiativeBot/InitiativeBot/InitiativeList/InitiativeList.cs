@@ -66,7 +66,7 @@ namespace InitiativeBot.InitiativeList
             _roundIndex += 1;
             _players.ForEach(p =>
             {
-                if (p.State == Player.PlayerState.unactive) { p.State = Player.PlayerState.active; }
+                if (p.State == Player.PlayerState.inactive) { p.State = Player.PlayerState.active; }
             });
         }
 
