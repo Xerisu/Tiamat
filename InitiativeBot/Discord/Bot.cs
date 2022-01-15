@@ -16,12 +16,19 @@ namespace Discord
 {
     internal class Bot
     {
+        private const int _synchronizationDelayBetweenGuildsInMs = 500; // Needed to not reach api rate limit
+        private static readonly DiscordSocketConfig _discordSocketConfig = new()
+        {
+            GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages
+        };
+
+
         private readonly DiscordSocketClient _client;
         private readonly Dictionary<ulong, ServerInfo> _loadedServers = new();
 
         public Bot()
         {
-            _client = new DiscordSocketClient();
+            _client = new DiscordSocketClient(_discordSocketConfig);
             _client.Log += Logging;
             _client.Ready += ResyncBot;
             _client.JoinedGuild += ResyncBotInGuild;
@@ -45,17 +52,26 @@ namespace Discord
 
         private async Task ResyncBot()
         {
-            foreach(var guild in _client.Guilds)
+            Task[] resyncGuildTasks = new Task[_client.Guilds.Count];
+            for (int i = 0; i < _client.Guilds.Count; i++)
             {
-                await ResyncBotInGuild(guild);
+                resyncGuildTasks[i] = ResyncBotInGuild(_client.Guilds.ElementAt(i));
+                await Task.Delay(_synchronizationDelayBetweenGuildsInMs); // Without any delay Discord API complains about rate limit 
             }
+            await Task.WhenAll(resyncGuildTasks);
         }
 
         private async Task ResyncBotInGuild(SocketGuild guild)
         {
-            await ResyncCommandsInGuild(guild);
-            await FindAndPrepareGuildTiamatChannel(guild, Constants.BotSettings.ChannelName);
+            Log.Information("Started synchronization within guild {GuildName} ({GuildId})", guild.Name, guild.Id);
+            
+            Task resyncCommands = ResyncCommandsInGuild(guild);
+            Task prepareChannel = FindAndPrepareGuildTiamatChannel(guild, Constants.BotSettings.ChannelName);
+            await Task.WhenAll(resyncCommands, prepareChannel);
+            
             await RunCommandForGuild(guild);
+            
+            Log.Information("Finished synchronization within guild {GuildName} ({GuildId})", guild.Name, guild.Id);
         }
 
         #region Command resynchronization
