@@ -87,6 +87,7 @@ namespace InitiativeBot.InitiativeList
             {
                 _players.RemoveAt(deletedIndex);
                 if (deletedIndex < _activePlayerIndex) { _activePlayerIndex--; }
+                if (deletedIndex == _players.Count && _activePlayerIndex == _players.Count) { NextTurn(); }
             }
         }
     }

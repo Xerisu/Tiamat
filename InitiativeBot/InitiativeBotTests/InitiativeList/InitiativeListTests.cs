@@ -80,6 +80,19 @@ namespace InitiativeBotTests.InitiativeList
         }
 
         [Fact]
+        public void RemovePlayer_Should_StartNextRoundWhenRemoveLastAndActivePlayer()
+        {
+            var initiativeList = new InitiativeBot.InitiativeList.InitiativeList(_mockInitiativeList, new MockRNG());
+            initiativeList.NextTurn();
+            initiativeList.NextTurn();
+            initiativeList.NextTurn();
+            Assert.Equal("Dawra", initiativeList.Players[initiativeList.ActivePlayerIndex].Name);
+            initiativeList.RemovePlayer("Dawra");
+            Assert.Equal("Seika", initiativeList.Players[initiativeList.ActivePlayerIndex].Name);
+            Assert.Equal(2, initiativeList.Round);
+        }
+
+        [Fact]
         public void AddPlayer_Should_Work()
         {
             var initiativeList = new InitiativeBot.InitiativeList.InitiativeList(Array.Empty<Player>(), new MockRNG());
@@ -93,6 +106,7 @@ namespace InitiativeBotTests.InitiativeList
             initiativeList.AddPlayer("Kamień", new Roll(101));
             Assert.Equal("Kamień", initiativeList.Players[initiativeList.ActivePlayerIndex+1].Name);
             Assert.Equal(PlayerState.unactive, initiativeList.Players[initiativeList.ActivePlayerIndex+1].State);
+
         }
     }
 }
