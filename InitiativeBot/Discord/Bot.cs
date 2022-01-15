@@ -16,12 +16,19 @@ namespace Discord
 {
     internal class Bot
     {
+        private const int _synchronizationDelayBetweenGuildsInMs = 500; // Needed to not reach api rate limit
+        private static readonly DiscordSocketConfig _discordSocketConfig = new()
+        {
+            GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages
+        };
+
+
         private readonly DiscordSocketClient _client;
         private readonly Dictionary<ulong, ServerInfo> _loadedServers = new();
 
         public Bot()
         {
-            _client = new DiscordSocketClient();
+            _client = new DiscordSocketClient(_discordSocketConfig);
             _client.Log += Logging;
             _client.Ready += ResyncBot;
             _client.JoinedGuild += ResyncBotInGuild;
@@ -45,21 +52,30 @@ namespace Discord
 
         private async Task ResyncBot()
         {
-            foreach(var guild in _client.Guilds)
+            Task[] resyncGuildTasks = new Task[_client.Guilds.Count];
+            for (int i = 0; i < _client.Guilds.Count; i++)
             {
-                await ResyncBotInGuild(guild);
+                resyncGuildTasks[i] = ResyncBotInGuild(_client.Guilds.ElementAt(i));
+                await Task.Delay(_synchronizationDelayBetweenGuildsInMs); // Without any delay Discord API complains about rate limit 
             }
+            await Task.WhenAll(resyncGuildTasks);
         }
 
         private async Task ResyncBotInGuild(SocketGuild guild)
         {
-            await ResyncCommandsInGuild(guild);
-            await FindAndPrepareGuildTiamatChannel(guild, Constants.BotSettings.ChannelName);
+            Log.Information("Started synchronization within guild {GuildName} ({GuildId})", guild.Name, guild.Id);
+            
+            Task resyncCommands = ResyncCommandsInGuild(guild);
+            Task prepareChannel = FindAndPrepareGuildTiamatChannel(guild, Constants.BotSettings.ChannelName);
+            await Task.WhenAll(resyncCommands, prepareChannel);
+            
             await RunCommandForGuild(guild);
+            
+            Log.Information("Finished synchronization within guild {GuildName} ({GuildId})", guild.Name, guild.Id);
         }
 
         #region Command resynchronization
-        private IReadOnlyDictionary<string, SlashCommandBuilder> _commandToBuilders = new Dictionary<string, SlashCommandBuilder>()
+        private readonly IReadOnlyDictionary<string, SlashCommandBuilder> _commandToBuilders = new Dictionary<string, SlashCommandBuilder>()
         {
             [Constants.Commands.TiamatSetup.CommandName] = new SlashCommandBuilder()
                 .WithName(Constants.Commands.TiamatSetup.CommandName)
@@ -137,7 +153,7 @@ namespace Discord
             Log.Information("Created info for guild {GuildName} ({GuildId}): ChannelId - {ChannelId}, MessageId - {MessagId}", guild.Name, guild.Id, channel.Id, messageId);
         }
 
-        private async Task<ulong> SendIntermediateSetupMessage(ITextChannel channel)
+        private static async Task<ulong> SendIntermediateSetupMessage(ITextChannel channel)
         {
             var emoji = String.IsNullOrWhiteSpace(Constants.Message.Button.Emote) ? null : new Emoji(Constants.Message.Button.Emote);
             var buttonBuilder = new ComponentBuilder()
@@ -146,7 +162,7 @@ namespace Discord
             return message.Id;
         }
 
-        private async Task<ITextChannel> CreateTiamatChannelInGuild(SocketGuild guild, string channelName)
+        private static async Task<ITextChannel> CreateTiamatChannelInGuild(SocketGuild guild, string channelName)
         {
             var newChannel = await guild.CreateTextChannelAsync(channelName);
 
@@ -183,7 +199,7 @@ namespace Discord
             });
         }
 
-        private T GetRequiredParameterFromCommand<T>(SocketSlashCommand command, string parameterName, out ApplicationCommandOptionType type)
+        private static T GetRequiredParameterFromCommand<T>(SocketSlashCommand command, string parameterName, out ApplicationCommandOptionType type)
         {
             var parameter = command.Data.Options.FirstOrDefault(option => option.Name == parameterName);
 
@@ -196,7 +212,7 @@ namespace Discord
             return (T)parameter.Value;
         }
 
-        private T? GetOptionalParameterFromCommand<T>(SocketSlashCommand command, string parameterName, out ApplicationCommandOptionType? type)
+        private static T? GetOptionalParameterFromCommand<T>(SocketSlashCommand command, string parameterName, out ApplicationCommandOptionType? type)
         {
             var parameter = command.Data.Options.FirstOrDefault(option => option.Name == parameterName);
 
@@ -211,7 +227,7 @@ namespace Discord
         }
 
         // Returns message that should be sent to the user as a result
-        private string HandleUserException(Exception ex, string context)
+        private static string HandleUserException(Exception ex, string context)
         {
             Log.Error(ex, "{Context} failed: {errorMessage}", context, ex.Message);
             return ex is UserMessageException umex ? umex.Message : Constants.Error.UnknownErrorMessage;
@@ -255,7 +271,7 @@ namespace Discord
             await command.RespondAsync(Constants.Commands.TiamatSetup.ResponseMessage);
         }
 
-        private async Task HandleHelpCommand(SocketSlashCommand command)
+        private static async Task HandleHelpCommand(SocketSlashCommand command)
         {
             await command.RespondAsync(Constants.Commands.TiamatHelp.ResponseMessage, ephemeral: true);
         }
