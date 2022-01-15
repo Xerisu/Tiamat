@@ -26,8 +26,8 @@ namespace Discord
 
 **/create-channel** - Adds the channel  `#tiamat-initiative-list`  in case it was removed or its name got changed
 
-**/join `player-name` `modifiers`** - Adds player to the initiative queue, with an `inactive` state (inactive players are skipped in the current round, and are hidden with ||spoilers||. Player-name can have spaces and special characters. To add modifiers, confirm typing name by pressing `Tab` , choose `modifiers` from the list (or press `Tab` twice) and then type modifiers of your initiative roll
-*possible modifiers:*
+**/join `player-name` `modifiers`** - Adds player to the initiative queue, with an `inactive` state (inactive players are skipped in the current round, and are hidden with ||spoilers||. Player-name can have spaces and special characters. To add modifiers, confirm typing name by pressing `Tab` , choose `modifiers` from the list (or press `Tab` twice) and then type modifiers of your initiative roll. Modifiers can be skipped or empty.
+*Possible modifiers:*
 `adv` - adds advantage to a roll (2d20, drop lowest)
 `dis` - adds disadvantage to a roll (2d20, drop highest)
 `+<number>` - adds a constant number to a roll, ex. +8
@@ -40,7 +40,9 @@ When you add a player that already exists, it will remove the existing one and a
 
 **/remove `player-name`** - removes player from the queue.
 
-**/clear** - clears the queue and resets the round counter (use it only when the battle finishes)";
+**/clear** - clears the queue and resets the round counter (use it only when the battle finishes)
+
+**Github Link:** https://github.com/Xerisu/Tiamat";
             }
 
             public static class TiamatClear
