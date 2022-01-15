@@ -66,6 +66,9 @@ namespace Discord
             public const string IntermediateStepMessage = "This message is an intermediate step in configuring bot in this server.";
             public const string InitiativeListMessageCommonPart = "**_Initiative List_**:\n";
             public const string EmptyListMessage = "_Add new players by using command `/join {name} {modifiers}`_";
+            public const string RoundZeroMessage = "__**Before Combat**__\n";
+            public const string InCombatRoundMessage = "__**Round: {0}**__\n"; //Should have 1 parameter: round number
+
             public static class Button
             {
                 public const string Label = "Next Turn";

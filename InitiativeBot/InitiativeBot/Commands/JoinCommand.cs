@@ -31,7 +31,12 @@ namespace InitiativeBot.Commands
         /// <inheritdoc/>
         public void Execute(IInitiativeList initiativeList)
         {
-            Console.WriteLine($"Join command executed. Player: {_playerName}. Roll: {_roll}");
+            initiativeList.AddPlayer(_playerName, _roll);
+        }
+
+        public override string ToString()
+        {
+            return $"Player {_playerName} added to a initiative list with roll {_roll}";
         }
     }
 }
