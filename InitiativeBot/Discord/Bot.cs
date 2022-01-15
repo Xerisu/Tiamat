@@ -75,7 +75,7 @@ namespace Discord
         }
 
         #region Command resynchronization
-        private IReadOnlyDictionary<string, SlashCommandBuilder> _commandToBuilders = new Dictionary<string, SlashCommandBuilder>()
+        private readonly IReadOnlyDictionary<string, SlashCommandBuilder> _commandToBuilders = new Dictionary<string, SlashCommandBuilder>()
         {
             [Constants.Commands.TiamatSetup.CommandName] = new SlashCommandBuilder()
                 .WithName(Constants.Commands.TiamatSetup.CommandName)
@@ -153,7 +153,7 @@ namespace Discord
             Log.Information("Created info for guild {GuildName} ({GuildId}): ChannelId - {ChannelId}, MessageId - {MessagId}", guild.Name, guild.Id, channel.Id, messageId);
         }
 
-        private async Task<ulong> SendIntermediateSetupMessage(ITextChannel channel)
+        private static async Task<ulong> SendIntermediateSetupMessage(ITextChannel channel)
         {
             var emoji = String.IsNullOrWhiteSpace(Constants.Message.Button.Emote) ? null : new Emoji(Constants.Message.Button.Emote);
             var buttonBuilder = new ComponentBuilder()
@@ -162,7 +162,7 @@ namespace Discord
             return message.Id;
         }
 
-        private async Task<ITextChannel> CreateTiamatChannelInGuild(SocketGuild guild, string channelName)
+        private static async Task<ITextChannel> CreateTiamatChannelInGuild(SocketGuild guild, string channelName)
         {
             var newChannel = await guild.CreateTextChannelAsync(channelName);
 
@@ -199,7 +199,7 @@ namespace Discord
             });
         }
 
-        private T GetRequiredParameterFromCommand<T>(SocketSlashCommand command, string parameterName, out ApplicationCommandOptionType type)
+        private static T GetRequiredParameterFromCommand<T>(SocketSlashCommand command, string parameterName, out ApplicationCommandOptionType type)
         {
             var parameter = command.Data.Options.FirstOrDefault(option => option.Name == parameterName);
 
@@ -212,7 +212,7 @@ namespace Discord
             return (T)parameter.Value;
         }
 
-        private T? GetOptionalParameterFromCommand<T>(SocketSlashCommand command, string parameterName, out ApplicationCommandOptionType? type)
+        private static T? GetOptionalParameterFromCommand<T>(SocketSlashCommand command, string parameterName, out ApplicationCommandOptionType? type)
         {
             var parameter = command.Data.Options.FirstOrDefault(option => option.Name == parameterName);
 
@@ -227,7 +227,7 @@ namespace Discord
         }
 
         // Returns message that should be sent to the user as a result
-        private string HandleUserException(Exception ex, string context)
+        private static string HandleUserException(Exception ex, string context)
         {
             Log.Error(ex, "{Context} failed: {errorMessage}", context, ex.Message);
             return ex is UserMessageException umex ? umex.Message : Constants.Error.UnknownErrorMessage;
@@ -271,7 +271,7 @@ namespace Discord
             await command.RespondAsync(Constants.Commands.TiamatSetup.ResponseMessage);
         }
 
-        private async Task HandleHelpCommand(SocketSlashCommand command)
+        private static async Task HandleHelpCommand(SocketSlashCommand command)
         {
             await command.RespondAsync(Constants.Commands.TiamatHelp.ResponseMessage, ephemeral: true);
         }
