@@ -27,9 +27,11 @@ namespace InitiativeBot.InitiativeList
         /// <inheritdoc/>
         public IReadOnlyList<Player.Player> Players => _players;
 
-        public InitiativeList(List<Player.Player> players, IRNG rng)
+        public InitiativeList(IEnumerable<Player.Player> players, IRNG rng)
         {
-            _players = players;
+            _players = new List<Player.Player>();
+            foreach(var p in players)
+                _players.Add(new Player.Player(p));
             _rng = rng;
         }
 
@@ -41,7 +43,7 @@ namespace InitiativeBot.InitiativeList
             _players.Add(player);
             _players.Sort();
             int addedIndex = _players.FindIndex(p => p.Name == name);
-            if (addedIndex < _activePlayerIndex) _activePlayerIndex++;
+            if (addedIndex <= _activePlayerIndex) _activePlayerIndex++;
         }
 
         /// <inheritdoc/>
