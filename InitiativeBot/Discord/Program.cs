@@ -5,6 +5,9 @@ const string token_file = "./token";
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
+#if DEBUG
+    .MinimumLevel.Debug()
+#endif
     .CreateLogger();
 
 string? token = Environment.GetEnvironmentVariable(environment_token_variable_name);

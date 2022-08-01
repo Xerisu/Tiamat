@@ -89,7 +89,8 @@ When you add a player that already exists, it will remove the existing one and a
             public const string EmptyListMessage = "_Add new players by using command `/join {name} {modifiers}`_";
             public const string RoundZeroMessage = "__**Before Combat**__\n";
             public const string InCombatRoundMessage = "__**Round: {0}**__\n"; //Should have 1 parameter: round number
-
+            public const string OldMessagesWarning = "This channel has old messages that cannot be easily deleted. You can leave them, but consider purging the channel or removing it to set it up from scratch.";
+            
             public static class Button
             {
                 public const string Label = "Next Turn";
