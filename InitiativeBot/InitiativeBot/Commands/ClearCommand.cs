@@ -23,7 +23,12 @@ namespace InitiativeBot.Commands
         /// <inheritdoc/>
         public void Execute(IInitiativeList initiativeList)
         {
-            Console.WriteLine("Clear command executed.");
+            initiativeList.ClearList();
+        }
+
+        public override string ToString()
+        {
+            return "List cleared";
         }
     }
 }

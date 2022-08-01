@@ -12,7 +12,7 @@ namespace InitiativeBot.InitiativeList.Player
     public enum PlayerState
     {
         active,
-        unactive,
+        inactive,
         unconscious,
         dead
     }
@@ -20,7 +20,7 @@ namespace InitiativeBot.InitiativeList.Player
     /// <summary>
     /// Player on the initiative list
     /// </summary>
-    public struct Player
+    public class Player : IComparable<Player>
     {
         /// <summary>
         /// Name of the player
@@ -43,11 +43,30 @@ namespace InitiativeBot.InitiativeList.Player
         /// <param name="name">Name of the player</param>
         /// <param name="initiative">State of the player</param>
         /// <param name="playerState">Initiative of the player</param>
-        public Player(string name, int initiative, PlayerState playerState = PlayerState.unactive)
+        public Player(string name, int initiative, PlayerState playerState = PlayerState.inactive)
         {
             Name = name;
             State = playerState;
             Initiative = initiative;
         }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">Player that will be copied</param>
+        public Player(Player other)
+        {
+            Name = other.Name;
+            State = other.State;
+            Initiative = other.Initiative;
+        }
+
+        public int CompareTo(Player? other)
+        {
+            if (other == null) return -1;
+            return other.Initiative - Initiative;
+
+        }
+
     }
 }
