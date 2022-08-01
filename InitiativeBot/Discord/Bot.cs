@@ -53,6 +53,7 @@ namespace Discord
         private async Task ResyncBot()
         {
             Task[] resyncGuildTasks = new Task[_client.Guilds.Count];
+            Log.Information( "Bot present in {Count} guilds", _client.Guilds.Count );
             for (int i = 0; i < _client.Guilds.Count; i++)
             {
                 resyncGuildTasks[i] = ResyncBotInGuild(_client.Guilds.ElementAt(i));
