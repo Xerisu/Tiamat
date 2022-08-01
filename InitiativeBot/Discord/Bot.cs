@@ -125,7 +125,7 @@ namespace Discord
             {
                 var builder = _commandToBuilders[command];
                 await _client.Rest.CreateGuildCommand(builder.Build(), guild.Id);
-                Log.Information("Added {Command} command in guild {GuildName} ({GuildId})", command, guild.Name, guild.Id);
+                Log.Debug("Added {Command} command in guild {GuildName} ({GuildId})", command, guild.Name, guild.Id);
             } 
             catch (HttpException exception)
             {
@@ -144,9 +144,17 @@ namespace Discord
             {
                 channel = await CreateTiamatChannelInGuild(guild, tiamatChannelName);
             }
-            var messages = await channel.GetMessagesAsync(50).FlattenAsync();
-            await channel.DeleteMessagesAsync(messages);
-            Log.Information("Removed {MessageCount} message(s) from the channel in {GuildName} ({GuildId})", messages.Count(), guild.Name, guild.Id);
+
+            var messages = await channel.GetMessagesAsync().FlattenAsync();
+            var messagesPossibleToDelete = messages.Where( message => ( DateTimeOffset.UtcNow - message.Timestamp ).TotalDays <= 14 );
+            await channel.DeleteMessagesAsync( messagesPossibleToDelete );
+            Log.Debug("Removed {MessageCount} message(s) from the channel in {GuildName} ({GuildId})", messagesPossibleToDelete.Count(), guild.Name, guild.Id);
+
+            messages = await channel.GetMessagesAsync().FlattenAsync();
+            if(messages.Any())
+            {
+                await SendRemoveOldMessagesWarning( channel );
+            }
 
             var messageId = await SendIntermediateSetupMessage(channel);
 
@@ -160,6 +168,12 @@ namespace Discord
             var buttonBuilder = new ComponentBuilder()
                 .WithButton(Constants.Message.Button.Label, Constants.Message.Button.Id, Constants.Message.Button.Style, emoji);
             var message = await channel.SendMessageAsync(Constants.Message.IntermediateStepMessage, components: buttonBuilder.Build());
+            return message.Id;
+        }
+
+        private static async Task<ulong> SendRemoveOldMessagesWarning( ITextChannel channel )
+        {
+            var message = await channel.SendMessageAsync( Constants.Message.OldMessagesWarning );
             return message.Id;
         }
 
